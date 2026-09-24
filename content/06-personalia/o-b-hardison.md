@@ -11,7 +11,8 @@ related: []
 aliases: ["O.B. Hardison", "Osborne Bennett Hardison Jr."]
 ---
 
-> 📷 Фото: [Library of Congress — O.B Hardison Jr. (1927-1990)](https://www.loc.gov/item/n50020604/o-b-hardison-jr-1927-1990/). Скачайте портрет оттуда, сохраните как `content/assets/images/o-b-hardison.jpg`, вставьте `![[o-b-hardison.jpg|200]]`.
+![[assets/images/hardison.jpg|200]]
+
 
 ## Кто это
 О.Б. Хардисон-младший (1927/1928 — 1990) — американский литературовед, поэт, эссеист, педагог. Автор книг о широком круге тем — от Аристотеля и Гомера до культуры и технологий XX века; автор двух поэтических сборников: «Lyrics and Elegies» (1958) и «Pro Musica Antiqua» (1977). Преподавая в университете Северной Каролины в Чапел-Хилле, был отмечен журналом Time как один из лучших преподавателей страны.

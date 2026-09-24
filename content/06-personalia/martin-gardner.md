@@ -10,8 +10,8 @@ tags:
 related: []
 aliases: ["Martin Gardner"]
 ---
+![[assets/images/martin_gardner.jpeg]]
 
-> 📷 Фото: [File:Martin Gardner.jpeg — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Martin_Gardner.jpeg) (Oberwolfach Photo Collection, CC-BY-SA-2.0-DE). Скачайте файл, сохраните как `content/assets/images/martin-gardner.jpg`, затем вставьте `![[martin-gardner.jpg|200]]`.
 
 ## Кто это
 Мартин Гарднер (21 октября 1914 — 22 мая 2010) — американский популяризатор науки и математики, автор около 70–80 книг. Более 25 лет вёл легендарную колонку «Mathematical Games» в журнале Scientific American, во многом сформировавшую жанр занимательной математики XX века. Его книга **«Fads and Fallacies in the Name of Science»** (1952, изначально «In the Name of Science»; переработанное издание — Dover, 1957) — одна из основополагающих работ скептического движения: разбор псевдонаучных теорий и культов (полая Земля, Великовский, лозоходство и др.).

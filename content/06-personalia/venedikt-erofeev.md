@@ -11,7 +11,7 @@ related: []
 aliases: ["Веничка Ерофеев", "Venedikt Yerofeyev"]
 ---
 
-> 📷 Фото: категория [Category:Venedict Yerofeyev — Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:Venedict_Yerofeyev) (портретных фото немного, в основном фото могилы писателя — поищите там же портрет в статье [Wikipedia: Ерофеев, Венедикт Васильевич](https://ru.wikipedia.org/wiki/%D0%95%D1%80%D0%BE%D1%84%D0%B5%D0%B5%D0%B2,_%D0%92%D0%B5%D0%BD%D0%B5%D0%B4%D0%B8%D0%BA%D1%82_%D0%92%D0%B0%D1%81%D0%B8%D0%BB%D1%8C%D0%B5%D0%B2%D0%B8%D1%87)). Скачайте, сохраните как `content/assets/images/venedikt-erofeev.jpg`, вставьте `![[venedikt-erofeev.jpg|200]]`.
+![[assets/images/venedikt_erofeev.jpg|200]]
 
 ## Кто это
 Венедикт Васильевич Ерофеев (24 октября 1938, пос. Нива-2, Мурманская область — 11 мая 1990) — русский писатель, драматург, эссеист. Отец был репрессирован, что наложило отпечаток на всю его судьбу. Учился на филологическом факультете МГУ, был отчислен «за неправильное поведение».

@@ -11,7 +11,7 @@ related: []
 aliases: ["Sir Charles Hepburn Johnston", "Charles Johnston (diplomat)"]
 ---
 
-> 📷 Фото не подтверждено напрямую: см. статью в Wikipedia — [Charles Johnston (diplomat)](https://en.wikipedia.org/wiki/Charles_Johnston_(diplomat)). Скачайте портрет оттуда (через Wikimedia Commons), сохраните как `content/assets/images/charles-johnston.jpg`, вставьте `![[charles-johnston.jpg|200]]`.
+![[assets/images/charles_johnston.jpg|200]]
 
 ## Кто это
 Сэр Чарльз Хепбёрн Джонстон (11 марта 1912 — 23 апреля 1986) — британский кадровый дипломат высшего ранга и переводчик русской поэзии. Учился в Винчестер-колледже и Баллиол-колледже (Оксфорд), поступил на дипломатическую службу в 1936 году.
