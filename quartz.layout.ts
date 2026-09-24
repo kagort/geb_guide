@@ -1,6 +1,18 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
 
+// sort explorer entries by filename/slug (numeric-aware) instead of by page title,
+// so e.g. chapter-00.. chapter-09 sort correctly instead of "ГЛАВА I" vs "ГЛАВА IX"
+const explorerSortBySlug = (a: { isFolder: boolean; slugSegment: string }, b: { isFolder: boolean; slugSegment: string }) => {
+  if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
+    return a.slugSegment.localeCompare(b.slugSegment, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  }
+  return !a.isFolder && b.isFolder ? 1 : -1
+}
+
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
@@ -38,7 +50,7 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({ sortFn: explorerSortBySlug }),
   ],
   right: [
     Component.Graph(),
@@ -62,7 +74,7 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({ sortFn: explorerSortBySlug }),
   ],
   right: [],
 }
