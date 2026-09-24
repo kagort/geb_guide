@@ -1,10 +1,12 @@
 ---
-id: persona_2027-05-13-session-34
+id:
 title: ""
 title_en: ""
 type: персоналия
 status: draft
-tags: [geb, персоналия]
+tags:
+  - geb
+  - персоналия
 related: []
 aliases: []
 ---
