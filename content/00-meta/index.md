@@ -9,7 +9,7 @@ type: moc
 - [[schedule|Расписание семинара]] — 40 встреч, 24.09.2026–24.06.2027
 - Часть I (главы I–IX): `02-part-i/chapters`, `02-part-i/dialogues`
 - Часть II (главы X–XX): `03-part-ii/chapters`, `03-part-ii/dialogues`
-- [[intro-musico-logical-offering|Интродукция]]
+- [[chapter-00-introduction-a-musico-logical-offering|Интродукция]]
 - [[six-part-ricercar|Шестиголосный Ричеркар (финал)]]
 - Заметки встреч: `04-sessions/`
 - Понятия: `05-concepts/`

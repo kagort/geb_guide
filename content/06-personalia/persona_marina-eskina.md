@@ -8,7 +8,7 @@ tags:
   - geb
   - персоналия
   - переводчик
-related: ["[[intro-musico-logical-offering]]", "[[dialogue-05-little-harmonic-labyrinth]]"]
+related: ["[[chapter-00-introduction-a-musico-logical-offering]]", "[[dialogue-05-little-harmonic-labyrinth]]"]
 aliases: ["Marina Eskina", "Марина Анатольевна Эскина"]
 ---
 
@@ -34,7 +34,7 @@ aliases: ["Marina Eskina", "Марина Анатольевна Эскина"]
 
 ## Связанные карточки
 - [[natalya-eskina|Наталья Эскина]] _(карточка ещё не создана — редактор Диалогов, переводчик баховского стихотворения)_
-- [[intro-musico-logical-offering]]
+- [[chapter-00-introduction-a-musico-logical-offering]]
 - [[dialogue-05-little-harmonic-labyrinth]]
 
 ## Комментарий составителя
