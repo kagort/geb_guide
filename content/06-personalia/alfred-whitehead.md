@@ -20,7 +20,7 @@ aliases: ["Alfred North Whitehead", "А.Н. Уайтхед"]
 ## Где упоминается в тексте
 | Глава | Контекст |
 |---|---|
-| Интродукция | как соавтор Principia Mathematica |
+| [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | как соавтор Principia Mathematica |
 
 ## Связанные карточки
 - [[bertrand-russell|Бертран Рассел]]

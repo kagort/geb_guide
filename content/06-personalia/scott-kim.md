@@ -22,7 +22,7 @@ aliases: ["Scott Kim"]
 ## Где упоминается в тексте
 | Глава | Контекст |
 |---|---|
-| Интродукция | как автор канона на тему «Good King Wenceslas», подаренного Хофштадтеру |
+| [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | как автор канона на тему «Good King Wenceslas», подаренного Хофштадтеру |
 
 ## Связанные карточки
 - [[fugue-and-canon|Фуга и канон]]

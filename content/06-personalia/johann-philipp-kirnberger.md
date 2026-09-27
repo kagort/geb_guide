@@ -20,7 +20,7 @@ aliases: ["Johann Philipp Kirnberger"]
 ## Где упоминается в тексте
 | Глава | Контекст |
 |---|---|
-| Интродукция | уточнить при работе над текстом |
+| [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | уточнить при работе над текстом |
 
 ## Связанные карточки
 - [[johann-sebastian-bach|И.С. Бах]]

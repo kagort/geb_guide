@@ -20,7 +20,7 @@ aliases: ["Bertrand Russell"]
 ## Где упоминается в тексте
 | Глава | Контекст |
 |---|---|
-| Интродукция | как соавтор Principia Mathematica и автор одноимённого парадокса |
+| [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | как соавтор Principia Mathematica и автор одноимённого парадокса |
 
 ## Связанные карточки
 - [[alfred-whitehead|Альфред Уайтхед]]
