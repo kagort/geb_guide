@@ -1,14 +1,15 @@
 ---
 id: persona_kurt-godel
-title: "Курт Гёдель"
-title_en: "Kurt Gödel"
+title: Курт Гёдель
+title_en: Kurt Gödel
 type: персоналия
 status: draft
 tags:
   - geb
   - персоналия
 related: []
-aliases: ["Kurt Gödel"]
+aliases:
+  - Kurt Gödel
 ---
 
 ## Кто это
