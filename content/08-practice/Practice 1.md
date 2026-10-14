@@ -30,16 +30,16 @@
 
 После принятия у вас появится доступ к репозиторию.
 
-![1791898536691](image/1/1791898536691.png)
+![alt text](image.png)
 
-![1791898572926](image/1/1791898572926.png)
+![alt text](image-1.png)
 
 ## Задача 3. Импортировать (склонировать) репозиторий для локальной работы
 
 1. Откройте страницу проекта:
 2. Нажмите зелёную кнопку **Code** и скопируйте ссылку (HTTPS)
 
-![1791898931522](image/1/1791898931522.png)
+![alt text](image-2.png)
 
 **Если вы работаете в терминале**
 
@@ -137,6 +137,35 @@ git pull origin main         # забираем обновления
 git checkout ivan-ivanov     # переходим в свою ветку 
 git merge main               # забираем обновления в свою ветку
 ```
+
+P.s. если вы делаете merge у вас появится экран с большим количеством текста (например)
+
+```bash
+Merge branch 'main' into litvel
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+~
+~
+~
+~
+~
+~
+~
+
+```
+
+Не пугаемся. Это просто оповещание.
+Если это редактр VIM попробуйте:
+- Нажмите Esc — выйти из режима ввода
+- Наберите :wq и нажмите Enter — сохранить и выйти
+
+Если не сработало, возможно редактор — Nano
+- Нажмите Ctrl + O, затем Enter — сохранить
+- Нажмите Ctrl + X — выйти
+
 
 ### 5.5. Создать Pull Request с комментарием
 
