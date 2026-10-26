@@ -19,7 +19,30 @@ export interface D3Config {
   showTags: boolean
   focusOnHover?: boolean
   enableRadial?: boolean
+  typeGroups?: GraphTypeGroup[]
+  otherColor?: string
+  showLegend?: boolean
 }
+
+// группы узлов по frontmatter.type: цвет на графе и пункт в меню глобального графа
+export interface GraphTypeGroup {
+  type: string
+  label: string
+  color: string
+}
+
+// служебные ключи для меню: теги и карточки без известного типа
+export const TAGS_GROUP_KEY = "__tags__"
+export const OTHER_GROUP_KEY = "__other__"
+
+const defaultTypeGroups: GraphTypeGroup[] = [
+  { type: "персоналия", label: "Люди", color: "#e8590c" },
+  { type: "концепт", label: "Концепты", color: "#1c7ed6" },
+  { type: "контекст", label: "Контекст", color: "#9c36b5" },
+  { type: "диалог", label: "Диалоги", color: "#e0a100" },
+  { type: "глава", label: "Главы", color: "#2f9e44" },
+  { type: "встреча-семинара", label: "Встречи", color: "#d6336c" },
+]
 
 interface GraphOptions {
   localGraph: Partial<D3Config> | undefined
@@ -41,6 +64,9 @@ const defaultOptions: GraphOptions = {
     removeTags: [],
     focusOnHover: false,
     enableRadial: false,
+    typeGroups: defaultTypeGroups,
+    otherColor: "#868e96",
+    showLegend: false,
   },
   globalGraph: {
     drag: true,
@@ -56,6 +82,9 @@ const defaultOptions: GraphOptions = {
     removeTags: [],
     focusOnHover: true,
     enableRadial: true,
+    typeGroups: defaultTypeGroups,
+    otherColor: "#868e96",
+    showLegend: true,
   },
 }
 
@@ -97,6 +126,33 @@ export default ((opts?: Partial<GraphOptions>) => {
         </div>
         <div class="global-graph-outer">
           <div class="global-graph-container" data-cfg={JSON.stringify(globalGraph)}></div>
+          {globalGraph.showLegend && (
+            <fieldset class="graph-legend">
+              <legend>Показывать</legend>
+              {(globalGraph.typeGroups ?? []).map((g) => (
+                <label>
+                  <input type="checkbox" data-group={g.type} checked />
+                  <span class="graph-legend-dot" style={{ backgroundColor: g.color }}></span>
+                  {g.label}
+                </label>
+              ))}
+              <label>
+                <input type="checkbox" data-group={OTHER_GROUP_KEY} checked />
+                <span
+                  class="graph-legend-dot"
+                  style={{ backgroundColor: globalGraph.otherColor }}
+                ></span>
+                Прочее
+              </label>
+              {globalGraph.showTags && (
+                <label>
+                  <input type="checkbox" data-group={TAGS_GROUP_KEY} checked />
+                  <span class="graph-legend-dot graph-legend-tag"></span>
+                  Теги
+                </label>
+              )}
+            </fieldset>
+          )}
         </div>
       </div>
     )
