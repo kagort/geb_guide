@@ -63,14 +63,37 @@ function addToVisited(slug: SimpleSlug) {
   localStorage.setItem(localStorageKey, JSON.stringify([...visited]))
 }
 
+// ключи совпадают с TAGS_GROUP_KEY / OTHER_GROUP_KEY в Graph.tsx
+const TAGS_GROUP = "__tags__"
+const OTHER_GROUP = "__other__"
+
+// скрытые в меню глобального графа группы узлов
+const hiddenGroupsKey = "graph-hidden-groups"
+function getHiddenGroups(): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(hiddenGroupsKey) ?? "[]"))
+  } catch {
+    return new Set()
+  }
+}
+
+function setHiddenGroups(groups: Set<string>) {
+  try {
+    localStorage.setItem(hiddenGroupsKey, JSON.stringify([...groups]))
+  } catch {}
+}
+
 type TweenNode = {
   update: (time: number) => void
   stop: () => void
 }
 
-async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
+async function renderGraph(
+  graph: HTMLElement,
+  fullSlug: FullSlug,
+  hiddenGroups: Set<string> = new Set(),
+) {
   const slug = simplifySlug(fullSlug)
-  const visited = getVisited()
   removeAllChildren(graph)
 
   let {
@@ -87,7 +110,11 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     showTags,
     focusOnHover,
     enableRadial,
+    typeGroups,
+    otherColor,
   } = JSON.parse(graph.dataset["cfg"]!) as D3Config
+  if (hiddenGroups.has(TAGS_GROUP)) showTags = false
+  const groupColors = new Map((typeGroups ?? []).map((g) => [g.type, g.color]))
 
   const data: Map<SimpleSlug, ContentDetails> = new Map(
     Object.entries<ContentDetails>(await fetchData).map(([k, v]) => [
@@ -98,6 +125,12 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   const links: SimpleLinkData[] = []
   const tags: SimpleSlug[] = []
   const validLinks = new Set(data.keys())
+
+  const groupOf = (id: SimpleSlug): string => {
+    if (id.startsWith("tags/")) return TAGS_GROUP
+    const type = data.get(id)?.type
+    return type && groupColors.has(type) ? type : OTHER_GROUP
+  }
 
   const tweens = new Map<string, TweenNode>()
   for (const [source, details] of data.entries()) {
@@ -141,6 +174,11 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   } else {
     validLinks.forEach((id) => neighbourhood.add(id))
     if (showTags) tags.forEach((tag) => neighbourhood.add(tag))
+  }
+
+  // убираем скрытые группы; текущую страницу оставляем всегда
+  for (const id of neighbourhood) {
+    if (id !== slug && hiddenGroups.has(groupOf(id))) neighbourhood.delete(id)
   }
 
   const nodes = [...neighbourhood].map((url) => {
@@ -193,16 +231,13 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     {} as Record<(typeof cssVars)[number], string>,
   )
 
-  // calculate color
+  // цвет узла — по типу карточки; текущая страница дополнительно обводится
   const color = (d: NodeData) => {
-    const isCurrent = d.id === slug
-    if (isCurrent) {
-      return computedStyleMap["--secondary"]
-    } else if (visited.has(d.id) || d.id.startsWith("tags/")) {
+    const group = groupOf(d.id)
+    if (group === TAGS_GROUP) {
       return computedStyleMap["--tertiary"]
-    } else {
-      return computedStyleMap["--gray"]
     }
+    return groupColors.get(group) ?? otherColor ?? computedStyleMap["--gray"]
   }
 
   function nodeRadius(d: NodeData) {
@@ -417,6 +452,8 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
     if (isTagNode) {
       gfx.stroke({ width: 2, color: computedStyleMap["--tertiary"] })
+    } else if (nodeId === slug) {
+      gfx.stroke({ width: 2, color: computedStyleMap["--dark"] })
     }
 
     nodesContainer.addChild(gfx)
@@ -596,21 +633,50 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
   })
 
   const containers = [...document.getElementsByClassName("global-graph-outer")] as HTMLElement[]
-  async function renderGlobalGraph() {
+  async function drawGlobalGraphs() {
+    cleanupGlobalGraphs()
     const slug = getFullSlug(window)
+    const hiddenGroups = getHiddenGroups()
+    for (const container of containers) {
+      const graphContainer = container.querySelector(".global-graph-container") as HTMLElement
+      if (graphContainer) {
+        globalGraphCleanups.push(await renderGraph(graphContainer, slug, hiddenGroups))
+      }
+    }
+  }
+
+  async function renderGlobalGraph() {
     for (const container of containers) {
       container.classList.add("active")
       const sidebar = container.closest(".sidebar") as HTMLElement
       if (sidebar) {
         sidebar.style.zIndex = "1"
       }
-
-      const graphContainer = container.querySelector(".global-graph-container") as HTMLElement
       registerEscapeHandler(container, hideGlobalGraph)
-      if (graphContainer) {
-        globalGraphCleanups.push(await renderGraph(graphContainer, slug))
-      }
     }
+    await drawGlobalGraphs()
+  }
+
+  // меню глобального графа: включение и выключение групп узлов
+  const legendInputs = [
+    ...document.querySelectorAll(".graph-legend input[data-group]"),
+  ] as HTMLInputElement[]
+  const hiddenOnLoad = getHiddenGroups()
+  for (const input of legendInputs) {
+    input.checked = !hiddenOnLoad.has(input.dataset.group!)
+    const onChange = () => {
+      const hidden = getHiddenGroups()
+      if (input.checked) hidden.delete(input.dataset.group!)
+      else hidden.add(input.dataset.group!)
+      setHiddenGroups(hidden)
+      // синхронизируем одноимённые флажки (граф может быть на странице не один)
+      for (const other of legendInputs) {
+        if (other.dataset.group === input.dataset.group) other.checked = input.checked
+      }
+      if (containers.some((c) => c.classList.contains("active"))) void drawGlobalGraphs()
+    }
+    input.addEventListener("change", onChange)
+    window.addCleanup(() => input.removeEventListener("change", onChange))
   }
 
   function hideGlobalGraph() {
