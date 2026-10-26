@@ -11,9 +11,9 @@ related: []
 aliases: ["Hans T. David", "Arthur Mendel", "The Bach Reader"]
 ---
 
-![[assets/images/arthur-mendel.jpg|200]]
+![[assets/images/hans-david.jpg|200]] ![[assets/images/arthur-mendel.jpg|200]]
 
-*Артур Мендель*
+*Ганс Т. Дэвид и Артур Мендель*
 
 ## Кто это
 Ганс Т. Дэвид и Артур Мендель — американские музыковеды, составители и редакторы книги **«The Bach Reader: A Life of Johann Sebastian Bach in Letters and Documents»** (1945, W.W. Norton) — сборника писем, документов и свидетельств современников о жизни Баха, переведённых и прокомментированных. Издание стало новым подходом к биографии композитора: вместо связного пересказа читателю предлагались первоисточники. Позднее переиздано с дополнениями Кристофа Вольфа как «The New Bach Reader».
