@@ -1,6 +1,6 @@
 ---
 id: concept_figure-figure-sequence
-title: "Головоломка «1 3 7 12 18 26 35 45 56 69»"
+title: "Головоломка «Фигура-Фигура»"
 title_en: "Hofstadter Figure-Figure sequence"
 type: концепт
 status: draft
@@ -9,7 +9,7 @@ tags:
   - geb
   - концепт
 related: []
-aliases: ["Последовательность «Рисунок-рисунок»", "Figure-Figure sequence", "Hofstadter Figure-Figure sequence", "1 3 7 12 18 26 35 45 56 69"]
+aliases: ["Головоломка «1 3 7 12 18 26 35 45 56 69»", "Фигура-Фигура", "Последовательность «Рисунок-рисунок»", "Figure-Figure sequence", "Hofstadter Figure-Figure sequence", "1 3 7 12 18 26 35 45 56 69"]
 ---
 
 ## Условие
