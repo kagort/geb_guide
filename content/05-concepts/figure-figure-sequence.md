@@ -1,6 +1,6 @@
 ---
 id: concept_figure-figure-sequence
-title: "Головоломка «Фигура-Фигура»"
+title: "Головоломка «1 3 7 12 18 26 35 45 56 69»"
 title_en: "Hofstadter Figure-Figure sequence"
 type: концепт
 status: draft
@@ -9,8 +9,10 @@ tags:
   - geb
   - концепт
 related: []
-aliases: ["Головоломка «1 3 7 12 18 26 35 45 56 69»", "Фигура-Фигура", "Последовательность «Рисунок-рисунок»", "Figure-Figure sequence", "Hofstadter Figure-Figure sequence", "1 3 7 12 18 26 35 45 56 69"]
+aliases: ["Последовательность Хофштадтера «Фигура-Фигура»", "Фигура-Фигура", "Последовательность «Рисунок-рисунок»", "Figure-Figure sequence", "Hofstadter Figure-Figure sequence", "1 3 7 12 18 26 35 45 56 69"]
 ---
+
+> **Официальное название.** Это последовательность Хофштадтера «Фигура-Фигура» (Hofstadter Figure-Figure sequence), в энциклопедии целочисленных последовательностей OEIS — [A005228](https://oeis.org/A005228). В русском переводе ГЭБ её называют «Рисунок-рисунок», по рисунку Скотта Кима.
 
 ## Условие
 В [[chapter-03-figure-and-ground|Главе III «Рисунок и фон»]] Хофштадтер предлагает читателю головоломку:
