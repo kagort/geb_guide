@@ -25,6 +25,7 @@ aliases: ["Scott Kim"]
 | Глава | Контекст |
 |---|---|
 | [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | как автор канона на тему «Good King Wenceslas», подаренного Хофштадтеру |
+| [[chapter-03-figure-and-ground\|Глава III]] | рис. 17 «РИСУНОК-РИСУНОК» — рекурсивный рисунок |
 
 ## Связанные карточки
 - [[fugue-and-canon|Фуга и канон]]
