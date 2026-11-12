@@ -26,6 +26,7 @@ aliases: ["Alan Turing"]
 | [[chapter-03-figure-and-ground\|Глава III]] | проблема остановки как ограничивающий результат |
 
 ## Связанные карточки
+- [[emil-post|Эмиль Пост]]
 - [[kurt-godel|Курт Гёдель]]
 - [[charles-babbage|Чарльз Бэббидж]]
 - [[halting-problem|Проблема остановки Тьюринга]]

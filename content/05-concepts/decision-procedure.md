@@ -61,6 +61,7 @@ https://colab.research.google.com/drive/1WmdH0Wvun6aB3l0hfBvAojkmFMJmZ0FN?usp=sh
 | [[chapter-02-meaning-and-form-in-mathematics\|Глава II: Содержание и форма в математике]] | система pr: критерий сложения, разрешимость систем с удлиняющими правилами, алгоритмы сверху вниз и снизу вверх |
 
 ## Связанные карточки
+- [[emil-post|Эмиль Пост]]
 - [[2026-10-15-session-04|Встреча 4: Трёхголосная инвенция + Глава I]]
 - [[isomorphism|Изоморфизм]]
 - [[godel-incompleteness-theorem|Теорема Гёделя о неполноте]]
