@@ -24,10 +24,13 @@ aliases: ["Euclid", "Евклид Александрийский"]
 |---|---|
 | [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | как основатель аксиоматического метода |
 | [[chapter-02-meaning-and-form-in-mathematics\|Глава II]] | доказательство бесконечности простых чисел |
+| [[chapter-04-consistency-completeness-and-geometry\|Глава IV]] | «Начала», пять постулатов, история пятого постулата |
 
 ## Связанные карточки
 - [[carroll-tortoise-paradox|Парадокс Льюиса Кэрролла]]
 - [[euclid-proof|Доказательство Евклида]]
+- [[euclid-elements|«Начала» Евклида]]
+- [[euclid-fifth-postulate|Пятый постулат Евклида]]
 
 ## Комментарий составителя
 
