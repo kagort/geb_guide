@@ -23,8 +23,10 @@ aliases: ["Johann Nikolaus Forkel"]
 | Глава | Контекст |
 |---|---|
 | [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | как автор первого жизнеописания Баха, источник рассказа о визите к Фридриху |
+| [[chapter-04-consistency-completeness-and-geometry\|Глава IV]] | слова о последнем хорале, продиктованном ослепшим Бахом: Форкель не знает, чего ему не хватало бы больше — хорала или окончания последней фуги |
 
 ## Связанные карточки
+- [[art-of-the-fugue|«Искусство фуги»]]
 - [[johann-sebastian-bach|И.С. Бах]]
 - [[bach-reader-david-mendel|Ганс Т. Дэвид и Артур Мендель]]
 
