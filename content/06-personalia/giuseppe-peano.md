@@ -23,8 +23,10 @@ aliases: ["Giuseppe Peano"]
 | Глава | Контекст |
 |---|---|
 | [[chapter-00-introduction-a-musico-logical-offering|Интродукция]] | в перечне логиков, заложивших формальную математическую логику |
+| [[chapter-04-consistency-completeness-and-geometry\|Глава IV]] | арифметика Пеано как сердцевина теории чисел, общая для всех возможных миров |
 
 ## Связанные карточки
+- [[peano-arithmetic|Арифметика Пеано]]
 - [[david-hilbert|Дэвид Гильберт]]
 - [[godel-incompleteness-theorem|Теорема Гёделя о неполноте]]
 

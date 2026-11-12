@@ -37,6 +37,7 @@ aliases: ["Graham Priest", "Прист"]
 | — | в ГЭБ не упоминается; введён на семинаре как контрапункт к Тарскому |
 
 ## Связанные карточки
+- [[possible-worlds-semantics|Семантика возможных миров]]
 - [[alfred-tarski|Альфред Тарский]]
 - [[epimenides-paradox|Парадокс Эпименида]]
 - [[godel-incompleteness-theorem|Теорема Гёделя о неполноте]]
