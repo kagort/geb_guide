@@ -28,6 +28,7 @@ aliases: ["Alfred Tarski", "Тарский"]
 | [[chapter-17-church-turing-tarski-and-others\|Глава XVII: Чёрч, Тюринг, Тарский и другие]] | теорема Тарского о невыразимости истины, связь с парадоксом лжеца |
 
 ## Связанные карточки
+- [[possible-worlds-semantics|Семантика возможных миров]]
 - [[kurt-godel|Курт Гёдель]]
 - [[godel-incompleteness-theorem|Теорема Гёделя о неполноте]]
 - [[epimenides-paradox|Парадокс Эпименида]]
