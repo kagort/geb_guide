@@ -45,6 +45,7 @@ aliases: ["Законы арифметики", "Basic laws of arithmetic", "Ко
 | [[chapter-02-meaning-and-form-in-mathematics\|Глава II: Содержание и форма в математике]] | разделы «Основные законы арифметики» и «Идеальные числа» |
 
 ## Связанные карточки
+- [[number-theory|Теория чисел]]
 - [[peano-arithmetic|Арифметика Пеано]]
 - [[euclid-proof|Доказательство Евклида]]
 - [[isomorphism|Изоморфизм]]

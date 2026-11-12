@@ -44,6 +44,7 @@ aliases: ["Peano arithmetic", "Аксиомы Пеано", "Постулаты �
 | [[chapter-14-on-formally-undecidable-propositions-of-tnt-and-related-systems\|Глава XIV]] | неполнота ТТЧ |
 
 ## Связанные карточки
+- [[number-theory|Теория чисел]]
 - [[giuseppe-peano|Джузеппе Пеано]]
 - [[godel-incompleteness-theorem|Теорема Гёделя о неполноте]]
 - [[euclid-fifth-postulate|Пятый постулат Евклида]]
