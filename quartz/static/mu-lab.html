@@ -1339,7 +1339,7 @@ function renderVerdict(a,raw){
     const steps=lastDerivation.length-1;
     const preds=predecessors(a.norm);
     html='<div class="verdict-card ok"><div class="v-head"><span class="v-icon">✓</span><div><h3>Да, это теорема!</h3>'+
-      '<p><b>'+a.norm+'</b> '+(steps===0?'— сама аксиома, «дарёная» теорема.':('выводима из MI за '+steps+' '+plural(steps,'шаг','шага','шагов')+'.'))+'</p></div></div>'+
+      '<p><b>'+a.norm+'</b> '+(steps===0?'— сама аксиома, данная с самого начала.':('выводима из MI за '+steps+' '+plural(steps,'шаг','шага','шагов')+'.'))+'</p></div></div>'+
       counts+passport;
     if(preds.length){
       html+='<div class="preds"><h4>По какому правилу получается — прямые предшественники</h4>'+
