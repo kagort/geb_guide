@@ -36,6 +36,7 @@ aliases: ["Halting problem", "Проблема остановки", "Пробл�
 | [[chapter-17-church-turing-tarski-and-others\|Глава XVII: Чёрч, Тюринг, Тарский и другие]] | тезис Чёрча — Тьюринга, границы вычислимого |
 
 ## Связанные карточки
+- [[emil-post|Эмиль Пост]]
 - [[alan-turing|Алан Тьюринг]]
 - [[recursion|Рекурсивность]]
 - [[decision-procedure|Алгоритм разрешимости]]
