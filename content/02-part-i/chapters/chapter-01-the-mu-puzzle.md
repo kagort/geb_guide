@@ -17,18 +17,13 @@ aliases: ["The MU Puzzle"]
 
 ## Интерактивная лаборатория MU
 
-<a href="https://kagort.github.io/geb_guide/static/mu-lab.html" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;text-decoration:none;background:linear-gradient(160deg,#1b1730,#0d0b14);border:1px solid #3c3268;border-radius:18px;padding:18px 22px;margin:8px 0 6px;box-shadow:0 10px 30px rgba(0,0,0,.35);color:#f2ecff">
-  <span style="display:inline-flex;gap:5px">
-    <span style="width:34px;height:40px;border-radius:9px;display:inline-grid;place-items:center;font:700 21px 'JetBrains Mono','Courier New',monospace;color:#ff4f9a;background:rgba(255,79,154,.14);border:1px solid rgba(255,79,154,.45)">M</span>
-    <span style="width:34px;height:40px;border-radius:9px;display:inline-grid;place-items:center;font:700 21px 'JetBrains Mono','Courier New',monospace;color:#ffb547;background:rgba(255,181,71,.14);border:1px solid rgba(255,181,71,.45)">I</span>
-    <span style="width:34px;height:40px;border-radius:9px;display:inline-grid;place-items:center;font:700 21px 'JetBrains Mono','Courier New',monospace;color:#57a8ff;background:rgba(87,168,255,.14);border:1px solid rgba(87,168,255,.45)">U</span>
+<a href="https://kagort.github.io/geb_guide/static/mu-lab.html" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;text-decoration:none;background:var(--highlight);border:1px solid var(--lightgray);border-radius:8px;padding:14px 18px;margin:8px 0 6px;color:var(--dark)">
+  <span style="display:inline-flex;gap:4px"><span style="width:30px;height:34px;border-radius:5px;display:inline-grid;place-items:center;font:600 18px var(--codeFont);color:#93466a;border:1px solid var(--lightgray);background:var(--light)">M</span><span style="width:30px;height:34px;border-radius:5px;display:inline-grid;place-items:center;font:600 18px var(--codeFont);color:#a6612c;border:1px solid var(--lightgray);background:var(--light)">I</span><span style="width:30px;height:34px;border-radius:5px;display:inline-grid;place-items:center;font:600 18px var(--codeFont);color:#2f7489;border:1px solid var(--lightgray);background:var(--light)">U</span></span>
+  <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
+    <span style="font:600 17px var(--headerFont);color:var(--dark)">Лаборатория MU: можете ли вы получить MU?</span>
+    <span style="font:400 14px var(--bodyFont);color:var(--darkgray)">Интерактивная игра по главе: правила, квесты, проверка теоремности и дерево теорем</span>
   </span>
-  <span style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:200px">
-    <span style="font:700 11px 'JetBrains Mono','Courier New',monospace;letter-spacing:2px;text-transform:uppercase;color:#8b7bff">формальные системы Поста · игра</span>
-    <span style="font:800 21px Georgia,'Times New Roman',serif;color:#f2ecff">Можете ли вы получить MU?</span>
-    <span style="font:500 13px system-ui,sans-serif;color:#9a90b8">Мастерская правил, квесты, проверка теоремности, дерево джинна и инсайт</span>
-  </span>
-  <span style="display:inline-flex;align-items:center;gap:8px;font:700 14px system-ui,sans-serif;padding:12px 20px;border-radius:12px;background:linear-gradient(120deg,#ffb547,#ff8f47);color:#221204;box-shadow:0 4px 20px rgba(255,181,71,.28);white-space:nowrap">▶ Начать вывод</span>
+  <span style="display:inline-flex;align-items:center;font:600 15px var(--bodyFont);padding:8px 16px;border-radius:5px;background:var(--secondary);color:var(--light);white-space:nowrap">Открыть игру →</span>
 </a>
 
 Игра открывается в новой вкладке. Прогресс квестов хранится только в вашем браузере.
