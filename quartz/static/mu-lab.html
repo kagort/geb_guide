@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MU · Лаборатория формальных систем</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{
+  --bg0:#0d0b14; --bg1:#141122; --surface:#1b1730; --surface2:#221c3c;
+  --line:#2e2750; --line2:#3c3268;
+  --ink:#f2ecff; --muted:#9a90b8; --muted2:#6f6592;
+  --paper:#f4ead8; --paper2:#ece0c8; --paper-ink:#241d33; --paper-muted:#6b5f78;
+  --amber:#ffb547; --amber-dim:rgba(255,181,71,.14); --amber-bord:rgba(255,181,71,.45);
+  --blue:#57a8ff;  --blue-dim:rgba(87,168,255,.14);  --blue-bord:rgba(87,168,255,.45);
+  --magenta:#ff4f9a; --magenta-dim:rgba(255,79,154,.14); --magenta-bord:rgba(255,79,154,.45);
+  --green:#43dd93; --green-dim:rgba(67,221,147,.13); --green-bord:rgba(67,221,147,.45);
+  --violet:#8b7bff; --violet-dim:rgba(139,123,255,.14); --violet-bord:rgba(139,123,255,.45);
+  --danger:#ff5470;
+  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono','Courier New',monospace;
+  color-scheme:dark;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg0);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;overflow-x:hidden}
+::selection{background:var(--amber);color:#1a1206}
+*{scrollbar-width:thin;scrollbar-color:var(--violet) var(--bg1)}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:var(--bg1);border-radius:8px}
+*::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--violet),#5b4bd8);border-radius:8px;border:2px solid var(--bg1)}
+*::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--amber),#ff8f47)}
+#bgCanvas{position:fixed;inset:0;z-index:-3;pointer-events:none}
+.aurora{position:fixed;inset:-20%;z-index:-4;pointer-events:none;
+  background:
+    radial-gradient(38% 34% at 18% 12%, rgba(139,123,255,.16), transparent 70%),
+    radial-gradient(30% 30% at 85% 20%, rgba(87,168,255,.10), transparent 70%),
+    radial-gradient(36% 40% at 70% 90%, rgba(255,181,71,.09), transparent 70%),
+    radial-gradient(26% 26% at 8% 80%, rgba(255,79,154,.08), transparent 70%);
+  animation:auroraDrift 34s ease-in-out infinite alternate}
+@keyframes auroraDrift{from{transform:translate(-2%,-1%) rotate(-1deg)}to{transform:translate(2%,2%) rotate(1deg)}}
+.grain{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+#fxCanvas{position:fixed;inset:0;z-index:80;pointer-events:none}
+#navbar{position:fixed;top:0;left:0;right:0;z-index:50;height:64px;display:flex;align-items:center;gap:18px;
+  padding:0 clamp(14px,3vw,32px);background:rgba(13,11,20,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);flex-shrink:0}
+.logo-tiles{display:flex;gap:3px}
+.logo-tiles span{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font:700 13px var(--mono)}
+.logo b{font:600 15px var(--serif);letter-spacing:.4px;white-space:nowrap}
+.logo small{display:block;font:500 10px var(--sans);color:var(--muted);letter-spacing:1.6px;text-transform:uppercase}
+.nav-links{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{color:var(--muted);text-decoration:none;font:500 13.5px var(--sans);padding:8px 12px;border-radius:9px;white-space:nowrap;transition:.2s}
+.nav-link:hover{color:var(--ink);background:var(--violet-dim)}
+.nav-link.active{color:var(--amber);background:var(--amber-dim)}
+#progressBadge{flex-shrink:0;border:1px solid var(--amber-bord);background:var(--amber-dim);color:var(--amber);
+  font:700 12.5px var(--mono);padding:7px 12px;border-radius:99px;cursor:pointer;transition:.2s}
+#progressBadge:hover{box-shadow:0 0 14px rgba(255,181,71,.35)}
+#progressBadge.pop{animation:pop .45s ease}
+#soundBtn{flex-shrink:0;width:40px;height:40px;border-radius:10px;border:1px solid var(--line2);background:var(--surface);
+  color:var(--green);cursor:pointer;display:grid;place-items:center;transition:.2s}
+#soundBtn:hover{border-color:var(--green-bord);box-shadow:0 0 12px rgba(67,221,147,.25)}
+#soundBtn.off{color:var(--danger)}
+#soundBtn svg{width:20px;height:20px}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+main{position:relative;z-index:1}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(14px,3vw,28px)}
+section{scroll-margin-top:86px;padding:56px 0}
+.sec-head{margin-bottom:26px}
+.sec-num{font:700 12px var(--mono);letter-spacing:3px;color:var(--violet);text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.sec-num::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,var(--violet-bord),transparent)}
+.sec-head h2{font:800 clamp(26px,3.4vw,38px) var(--serif);margin:8px 0 6px}
+.sec-head p{color:var(--muted);max-width:760px;font-size:15px}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease;transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none}
+.btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font:700 14px var(--sans);
+  padding:12px 20px;border-radius:12px;transition:.18s;text-decoration:none}
+.btn-primary{background:linear-gradient(120deg,var(--amber),#ff8f47);color:#221204;box-shadow:0 4px 20px rgba(255,181,71,.28)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,181,71,.45)}
+.btn-ghost{background:var(--violet-dim);color:var(--ink);border:1px solid var(--violet-bord)}
+.btn-ghost:hover{background:rgba(139,123,255,.24);transform:translateY(-2px)}
+.btn-sm{padding:8px 14px;font-size:12.5px;border-radius:9px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+button{font-family:var(--sans)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:6px}
+kbd{font:700 11px var(--mono);background:var(--surface2);border:1px solid var(--line2);border-bottom-width:2px;border-radius:5px;padding:2px 6px;color:var(--muted)}
+.tiles{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tile{display:grid;place-items:center;font-family:var(--mono);font-weight:700;border-radius:10px;border:1px solid;transition:transform .15s,box-shadow .15s;user-select:none}
+.t-M{color:var(--magenta);background:var(--magenta-dim);border-color:var(--magenta-bord);text-shadow:0 0 12px rgba(255,79,154,.5)}
+.t-I{color:var(--amber);background:var(--amber-dim);border-color:var(--amber-bord);text-shadow:0 0 12px rgba(255,181,71,.5)}
+.t-U{color:var(--blue);background:var(--blue-dim);border-color:var(--blue-bord);text-shadow:0 0 12px rgba(87,168,255,.5)}
+.tiles.tl .tile{width:54px;height:62px;font-size:32px;border-radius:12px}
+.tiles.tm .tile{width:38px;height:46px;font-size:23px}
+.tiles.ts .tile{width:27px;height:33px;font-size:16px;border-radius:7px}
+.tiles.tx .tile{width:19px;height:24px;font-size:12px;border-radius:5px}
+.tiles.mini .tile{width:22px;height:27px;font-size:14px;border-radius:6px}
+.tiles.mini{gap:3px}
+.tiles.micro .tile{width:16px;height:20px;font-size:11px;border-radius:4px}
+.tiles.micro{gap:2px}
+.tile.fresh{animation:tileIn .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes tileIn{from{transform:scale(.3) translateY(12px);opacity:0}to{transform:none;opacity:1}}
+#top{padding:118px 0 34px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:40px;align-items:center}
+.overline{font:700 11.5px var(--mono);letter-spacing:2.6px;color:var(--violet);text-transform:uppercase;margin-bottom:16px}
+.hero h1{font:800 clamp(34px,5.4vw,62px)/1.12 var(--serif);margin-bottom:18px}
+.hero h1 .mu-inline{display:inline-flex;gap:6px;vertical-align:-8px;margin-left:6px}
+.hero h1 .mu-inline .tile{width:52px;height:60px;font-size:32px;animation:heroTile 3.2s ease-in-out infinite}
+.hero h1 .mu-inline .tile:last-child{animation-delay:.4s}
+@keyframes heroTile{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero .lead{color:var(--muted);font-size:16.5px;max-width:560px;margin-bottom:26px}
+.hero .lead b{color:var(--ink)}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.hero-meta{display:flex;gap:8px;flex-wrap:wrap}
+.hero-meta span{font:700 11.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:5px 12px;background:var(--surface)}
+.hero-visual{position:relative;border:1px solid var(--line2);border-radius:22px;padding:34px 26px;background:linear-gradient(160deg,var(--surface),rgba(27,23,48,.4));overflow:hidden;min-height:280px;display:flex;flex-direction:column;justify-content:center;gap:22px}
+.hero-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(60% 60% at 70% 20%,rgba(139,123,255,.14),transparent 70%);pointer-events:none}
+.hv-row{display:flex;align-items:center;justify-content:center;gap:18px;position:relative}
+.hv-label{font:700 10.5px var(--mono);letter-spacing:2px;color:var(--muted);text-transform:uppercase;text-align:center;margin-bottom:8px}
+.hv-arrow{display:flex;flex-direction:column;align-items:center;color:var(--muted);font:700 22px var(--mono)}
+.hv-arrow em{font:700 11px var(--mono);font-style:normal;color:var(--amber);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hv-rules{display:flex;justify-content:center;gap:10px}
+.hv-rules span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--mono);border:1px solid;animation:floaty 4s ease-in-out infinite}
+.hv-rules span:nth-child(1){color:var(--blue);border-color:var(--blue-bord);background:var(--blue-dim)}
+.hv-rules span:nth-child(2){color:var(--violet);border-color:var(--violet-bord);background:var(--violet-dim);animation-delay:.5s}
+.hv-rules span:nth-child(3){color:var(--magenta);border-color:var(--magenta-bord);background:var(--magenta-dim);animation-delay:1s}
+.hv-rules span:nth-child(4){color:var(--green);border-color:var(--green-bord);background:var(--green-dim);animation-delay:1.5s}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hero-anim{opacity:0;transform:translateY(22px);animation:heroIn .8s ease forwards;animation-delay:var(--d,0s)}
+@keyframes heroIn{to{opacity:1;transform:none}}
+#quests{padding:18px 0 8px}
+.quest-strip{display:flex;gap:12px;overflow-x:auto;padding:6px 2px 14px}
+.quest-card{flex:0 0 200px;border:1px solid var(--line2);background:var(--surface);border-radius:16px;padding:14px;cursor:pointer;transition:.2s;position:relative;text-align:left;color:var(--ink)}
+.quest-card:hover{transform:translateY(-3px);border-color:var(--violet-bord);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.quest-card.active{border-color:var(--amber-bord);background:linear-gradient(160deg,var(--amber-dim),var(--surface));box-shadow:0 0 18px rgba(255,181,71,.18)}
+.quest-card.done{border-color:var(--green-bord)}
+.quest-card.impossible{border-style:dashed;border-color:var(--magenta-bord)}
+.qc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.qc-num{font:700 11px var(--mono);color:var(--muted);letter-spacing:1px}
+.qc-state{font:700 13px var(--mono)}
+.quest-card.done .qc-state{color:var(--green)}
+.qc-title{font:700 14px var(--sans);margin-bottom:8px}
+.qc-par{font:500 11px var(--sans);color:var(--muted);margin-top:8px}
+.qc-stars{color:var(--amber);letter-spacing:2px;font-size:12px}
+.ws-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+.panel{border:1px solid var(--line2);border-radius:20px;background:linear-gradient(170deg,var(--surface),rgba(27,23,48,.55));padding:22px}
+.panel h3{font:700 13px var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.panel h3 .tag{font:700 10px var(--mono);padding:3px 8px;border-radius:99px;letter-spacing:1px}
+.tag-m{background:var(--violet-dim);color:var(--violet);border:1px solid var(--violet-bord)}
+.tag-i{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-bord)}
+#questBanner{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border:1px solid var(--amber-bord);background:linear-gradient(120deg,var(--amber-dim),rgba(139,123,255,.08));border-radius:16px;padding:14px 18px;margin-bottom:18px}
+#qbTitle{font:700 14.5px var(--sans)}
+#qbTitle small{display:block;font:500 11.5px var(--sans);color:var(--muted)}
+#qbTarget{margin-left:auto}
+#qbSteps{font:700 12px var(--mono);color:var(--muted)}
+#qbHint{background:none;border:1px solid var(--line2);color:var(--amber);font:700 11.5px var(--sans);border-radius:99px;padding:6px 12px;cursor:pointer}
+#qbHint:hover{border-color:var(--amber-bord)}
+#qbHintText{width:100%;font:500 13px var(--sans);color:var(--amber);display:none}
+#qbHintText.show{display:block}
+#muDare{display:none}
+#muDare.show{display:inline-flex}
+.strip-zone{border:1px dashed var(--line2);border-radius:16px;padding:18px;min-height:118px;background:rgba(13,11,20,.5);position:relative}
+#tileStrip{max-height:216px;overflow-y:auto;padding:2px;position:relative}
+#tileStrip .tile{cursor:default}
+#tileStrip.arming .tile{opacity:.32}
+#tileStrip.arming .tile.occ{opacity:1;cursor:pointer;outline:2px solid var(--amber);outline-offset:1px;animation:occPulse 1.1s ease-in-out infinite}
+#tileStrip.arming .tile.occ:hover{transform:scale(1.12);box-shadow:0 0 18px rgba(255,181,71,.5)}
+@keyframes occPulse{0%,100%{outline-color:var(--amber)}50%{outline-color:rgba(255,181,71,.3)}}
+#armHint{font:500 12.5px var(--sans);color:var(--amber);margin-top:10px;min-height:18px}
+.ws-stats{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin:16px 0}
+.stat{border:1px solid var(--line);border-radius:12px;padding:8px 14px;background:var(--surface2);min-width:74px}
+.stat b{display:block;font:700 20px var(--mono)}
+.stat span{font:500 10.5px var(--sans);color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+.stat.si b{color:var(--amber)}.stat.su b{color:var(--blue)}
+.mod-box{border:1px solid var(--line);border-radius:12px;padding:8px 14px;background:var(--surface2);display:flex;flex-direction:column;gap:5px}
+.mod-box>span{font:500 10.5px var(--sans);color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+#modDial{display:flex;gap:6px}
+.md-dot{width:34px;height:30px;border-radius:8px;display:grid;place-items:center;font:700 14px var(--mono);border:1px solid var(--line2);color:var(--muted2);transition:.25s;position:relative}
+.md-dot.on{color:#221204;background:var(--amber);border-color:var(--amber);box-shadow:0 0 14px rgba(255,181,71,.5);animation:pop .4s ease}
+.md-dot.zero{border-style:dashed;border-color:var(--magenta-bord);color:var(--magenta)}
+.md-dot.zero small{position:absolute;bottom:-15px;font:700 8.5px var(--mono);letter-spacing:.5px;color:var(--magenta)}
+.mod-note{font:500 11px var(--sans);color:var(--muted2);margin-top:14px}
+.rule-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px}
+.rule-card{border:1px solid var(--line2);border-radius:14px;background:var(--surface2);padding:13px;cursor:pointer;text-align:left;color:var(--ink);transition:.18s;position:relative}
+.rule-card:hover:not(.unavailable){transform:translateY(-3px)}
+.rule-card.unavailable{opacity:.48;cursor:not-allowed}
+.rule-card.armed{outline:2px solid var(--amber);animation:occPulse 1.1s infinite}
+.rule-card.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.rc-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rc-badge{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 11px var(--mono);border:1px solid;flex-shrink:0}
+.r1 .rc-badge,.cr-r.r1{color:var(--blue);border-color:var(--blue-bord);background:var(--blue-dim)}
+.r2 .rc-badge,.cr-r.r2{color:var(--violet);border-color:var(--violet-bord);background:var(--violet-dim)}
+.r3 .rc-badge,.cr-r.r3{color:var(--magenta);border-color:var(--magenta-bord);background:var(--magenta-dim)}
+.r4 .rc-badge,.cr-r.r4{color:var(--green);border-color:var(--green-bord);background:var(--green-dim)}
+.rule-card.r1:hover:not(.unavailable){border-color:var(--blue-bord);box-shadow:0 6px 18px rgba(87,168,255,.2)}
+.rule-card.r2:hover:not(.unavailable){border-color:var(--violet-bord);box-shadow:0 6px 18px rgba(139,123,255,.2)}
+.rule-card.r3:hover:not(.unavailable){border-color:var(--magenta-bord);box-shadow:0 6px 18px rgba(255,79,154,.2)}
+.rule-card.r4:hover:not(.unavailable){border-color:var(--green-bord);box-shadow:0 6px 18px rgba(67,221,147,.2)}
+.rc-name{font:700 12.5px var(--sans)}
+.rc-formula{font:700 14px var(--mono);color:var(--amber);margin-bottom:6px}
+.rc-desc{font:500 11.5px/1.45 var(--sans);color:var(--muted);margin-bottom:8px;min-height:34px}
+.rc-avail{font:700 10.5px var(--mono);letter-spacing:.4px}
+.rc-avail.ok{color:var(--green)}.rc-avail.no{color:var(--muted2)}
+.rc-key{position:absolute;top:10px;right:10px}
+.rule-footnote{font:500 11.5px var(--sans);color:var(--muted2);margin-top:10px}
+/* ---- positional rule chooser: the fix ---- */
+.occ-chooser{margin-top:12px;border:1px dashed var(--amber-bord);border-radius:14px;padding:14px;background:linear-gradient(120deg,rgba(255,181,71,.1),rgba(139,123,255,.07));animation:vIn .3s ease}
+.oc-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.oc-head b{font:700 13px var(--sans);color:var(--amber)}
+.oc-head span{font:500 11.5px var(--sans);color:var(--muted)}
+#ocCancel{margin-left:auto;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);font:700 11px var(--sans);border-radius:99px;padding:5px 11px;cursor:pointer}
+#ocCancel:hover{color:var(--ink);border-color:var(--violet-bord)}
+.oc-list{display:flex;flex-wrap:wrap;gap:8px}
+.occ-choice{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line2);background:rgba(13,11,20,.55);border-radius:12px;padding:8px 12px;cursor:pointer;color:var(--ink);transition:.15s;text-align:left}
+.occ-choice:hover{border-color:var(--amber-bord);background:var(--amber-dim);transform:translateY(-2px);box-shadow:0 6px 16px rgba(255,181,71,.2)}
+.oc-n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 11px var(--mono);color:var(--amber);border:1px solid var(--amber-bord);background:var(--amber-dim);flex-shrink:0}
+.oc-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.oc-pos{font:500 10.5px var(--sans);color:var(--muted)}
+.oc-res{font:700 13px var(--mono);color:var(--amber);letter-spacing:1px;white-space:nowrap}
+.oc-more{font:500 11.5px var(--sans);color:var(--muted2);width:100%}
+.ws-controls{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+#stepCount{font:700 12.5px var(--mono);color:var(--muted);margin-left:auto}
+details.help{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:rgba(13,11,20,.4)}
+details.help summary{cursor:pointer;font:700 12.5px var(--sans);color:var(--violet)}
+details.help ol{margin:10px 0 4px 20px;color:var(--muted);font-size:13px}
+details.help li{margin-bottom:4px}
+.side-col{display:flex;flex-direction:column;gap:20px}
+#chainList{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-right:4px}
+.chain-row{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:rgba(13,11,20,.45);animation:rowIn .3s ease}
+@keyframes rowIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.chain-row:last-child{border-color:var(--amber-bord);background:var(--amber-dim)}
+.cr-n{font:700 11px var(--mono);color:var(--muted2);flex-shrink:0}
+.cr-s{font:700 13px var(--mono);flex:1;word-break:break-all;letter-spacing:1px}
+.cr-r{font:700 9.5px var(--mono);border:1px solid var(--line2);border-radius:99px;padding:2px 8px;white-space:nowrap;color:var(--muted)}
+.cr-tools{display:flex;gap:4px;flex-shrink:0}
+.cr-tools button{width:24px;height:24px;border-radius:6px;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);cursor:pointer;font-size:12px;line-height:1}
+.cr-tools button:hover{color:var(--amber);border-color:var(--amber-bord)}
+.col-tools{display:flex;gap:8px;margin-bottom:12px}
+#colFilter{flex:1;min-width:0;background:rgba(13,11,20,.55);border:1px solid var(--line2);border-radius:9px;color:var(--ink);font:500 12.5px var(--mono);padding:7px 10px}
+#colFilter::placeholder{color:var(--muted2)}
+#colSort{background:var(--surface2);border:1px solid var(--line2);border-radius:9px;color:var(--muted);font:500 11.5px var(--sans);padding:0 8px;cursor:pointer}
+#colClear{width:32px;border-radius:9px;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);cursor:pointer}
+#colClear:hover{color:var(--danger);border-color:var(--magenta-bord)}
+#collectionList{display:flex;flex-wrap:wrap;gap:7px;max-height:220px;overflow-y:auto;padding-right:4px}
+.col-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:var(--surface2);border-radius:99px;padding:5px 11px;cursor:pointer;color:var(--ink);font:700 12px var(--mono);letter-spacing:1px;transition:.15s}
+.col-chip:hover{border-color:var(--amber-bord);background:var(--amber-dim);transform:translateY(-2px)}
+.col-chip i{font:700 9.5px var(--mono);font-style:normal;color:var(--muted2)}
+.col-empty{font:500 12.5px var(--sans);color:var(--muted2)}
+.check-panel{border:1px solid var(--line2);border-radius:20px;background:linear-gradient(170deg,var(--surface),rgba(27,23,48,.55));padding:24px}
+#checkForm{display:flex;gap:12px;flex-wrap:wrap}
+#checkInput{flex:1;min-width:220px;background:rgba(13,11,20,.65);border:1px solid var(--line2);border-radius:14px;color:var(--ink);
+  font:700 22px var(--mono);letter-spacing:5px;padding:14px 18px;text-transform:uppercase;transition:.2s}
+#checkInput:focus{outline:none;border-color:var(--amber-bord);box-shadow:0 0 0 3px rgba(255,181,71,.15)}
+#checkInput::placeholder{color:var(--muted2);letter-spacing:3px;font-size:16px;text-transform:none}
+#checkBtn.pulse{animation:occPulse 1s infinite;outline:2px solid var(--amber)}
+.check-meta{display:flex;gap:16px;flex-wrap:wrap;margin:10px 2px 16px;min-height:20px}
+#normPreview{font:500 12px var(--mono);color:var(--violet)}
+#liveCounts{font:500 12px var(--mono);color:var(--muted)}
+.ex-label{font:700 11px var(--mono);letter-spacing:1.6px;color:var(--muted2);text-transform:uppercase;margin-bottom:8px}
+#exampleChips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.ex-chip{border:1px solid var(--line2);background:var(--surface2);border-radius:99px;padding:6px 13px;cursor:pointer;color:var(--ink);font:700 12.5px var(--mono);letter-spacing:1px;transition:.15s}
+.ex-chip:hover{border-color:var(--blue-bord);background:var(--blue-dim);transform:translateY(-2px)}
+.ex-chip.danger{border-color:var(--magenta-bord);color:var(--magenta)}
+.ex-chip.danger:hover{background:var(--magenta-dim)}
+.ex-chip small{font:500 9.5px var(--sans);color:var(--muted2);letter-spacing:0;margin-left:5px}
+.verdict-card{border-radius:18px;padding:22px;border:1px solid var(--line2);background:rgba(13,11,20,.5);animation:vIn .45s ease}
+@keyframes vIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.verdict-card.ok{border-color:var(--green-bord);background:linear-gradient(160deg,var(--green-dim),rgba(13,11,20,.5))}
+.verdict-card.no{border-color:var(--magenta-bord);background:linear-gradient(160deg,var(--magenta-dim),rgba(13,11,20,.5))}
+.v-head{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.v-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:700;flex-shrink:0}
+.ok .v-icon{background:var(--green-dim);border:1px solid var(--green-bord);color:var(--green)}
+.no .v-icon{background:var(--magenta-dim);border:1px solid var(--magenta-bord);color:var(--danger)}
+.v-head h3{font:800 22px var(--serif)}
+.ok .v-head h3{color:var(--green)}.no .v-head h3{color:var(--danger)}
+.v-head p{font:500 13px var(--sans);color:var(--muted)}
+.v-head p b{font-family:var(--mono);color:var(--ink);letter-spacing:2px}
+.passport{display:flex;flex-direction:column;gap:6px;margin:16px 0;padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(13,11,20,.4)}
+.pp-row{display:flex;align-items:center;gap:10px;font:500 13px var(--sans)}
+.pp-mark{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0}
+.pp-mark.y{background:var(--green-dim);color:var(--green);border:1px solid var(--green-bord)}
+.pp-mark.n{background:var(--magenta-dim);color:var(--danger);border:1px solid var(--magenta-bord)}
+.pp-val{margin-left:auto;font:700 12px var(--mono);color:var(--muted)}
+.v-counts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.v-counts span{font:700 11.5px var(--mono);border:1px solid var(--line2);border-radius:99px;padding:4px 11px;color:var(--muted)}
+.violation{border-left:3px solid var(--danger);padding:12px 16px;border-radius:0 12px 12px 0;background:rgba(255,84,112,.07);margin-bottom:12px}
+.violation h4{font:700 14px var(--sans);color:var(--danger);margin-bottom:6px}
+.violation p{font:500 13.5px/1.6 var(--sans);color:var(--ink)}
+.violation p b{color:var(--amber)}
+.mod-table{width:100%;border-collapse:collapse;margin:12px 0;font:500 12.5px var(--sans)}
+.mod-table td{border:1px solid var(--line);padding:7px 10px}
+.mod-table td:first-child{font:700 11px var(--mono);white-space:nowrap}
+.mod-table tr td:first-child.c1{color:var(--blue)}.mod-table tr td:first-child.c2{color:var(--violet)}
+.mod-table tr td:first-child.c3{color:var(--magenta)}.mod-table tr td:first-child.c4{color:var(--green)}
+.mu-banner{border:1px solid var(--magenta-bord);border-radius:16px;padding:20px;margin:14px 0;background:linear-gradient(140deg,rgba(255,79,154,.16),rgba(139,123,255,.1));text-align:center}
+.mu-banner .lock{font-size:34px;display:block;margin-bottom:8px;animation:pop .6s ease}
+.mu-banner h4{font:800 24px var(--serif);color:var(--magenta);margin-bottom:6px}
+.mu-banner p{font:500 13.5px var(--sans);color:var(--muted);max-width:520px;margin:0 auto 14px}
+.preds{margin:14px 0}
+.preds h4,.deriv h4{font:700 12px var(--sans);letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.pred-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--surface2);border-radius:11px;padding:7px 12px;margin:0 8px 8px 0;cursor:pointer;color:var(--ink);transition:.15s}
+.pred-chip:hover{border-color:var(--green-bord);background:var(--green-dim);transform:translateY(-2px)}
+.pred-chip .cr-s{font-size:12.5px}
+.deriv{margin-top:16px;border:1px solid var(--line);border-radius:14px;padding:16px;background:rgba(13,11,20,.4)}
+.deriv-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.deriv-head h4{margin:0;flex:1}
+#pbStrip{display:none;border:1px dashed var(--amber-bord);border-radius:12px;padding:12px;margin-bottom:12px;background:rgba(255,181,71,.05)}
+#pbStrip.show{display:block}
+#pbMeta{font:700 11.5px var(--mono);color:var(--amber);margin-bottom:8px}
+#pbTiles{max-height:96px;overflow-y:auto}
+.deriv-rows{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;padding-right:4px}
+.vd-row{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:9px;border:1px solid transparent;font:500 13px var(--mono);transition:.2s}
+.vd-row .cr-s{font-size:13px}
+.vd-row.playing{border-color:var(--amber-bord);background:var(--amber-dim);box-shadow:0 0 12px rgba(255,181,71,.2)}
+.v-empty{border:1px dashed var(--line2);border-radius:18px;padding:26px;text-align:center;color:var(--muted)}
+.v-empty h3{font:800 20px var(--serif);color:var(--ink);margin-bottom:10px}
+.v-empty ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin:14px auto;max-width:460px;text-align:left;font-size:13.5px}
+.v-empty li{display:flex;gap:10px;align-items:baseline}
+.v-empty li b{font-family:var(--mono);color:var(--amber);font-size:12px}
+.v-empty small{font-size:12px;color:var(--muted2)}
+.tree-panel{border:1px solid var(--line2);border-radius:20px;background:linear-gradient(170deg,var(--surface),rgba(27,23,48,.55));padding:22px}
+.tree-controls{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.tree-controls label{font:700 12px var(--sans);color:var(--muted);display:flex;align-items:center;gap:10px}
+#treeDepth{-webkit-appearance:none;appearance:none;width:150px;height:6px;border-radius:99px;background:linear-gradient(90deg,var(--violet),var(--amber));cursor:pointer}
+#treeDepth::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--amber);border:2px solid #221204;box-shadow:0 0 10px rgba(255,181,71,.6);cursor:pointer}
+#treeDepth::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--amber);border:2px solid #221204;cursor:pointer}
+#treeDepthVal{font:700 14px var(--mono);color:var(--amber);min-width:16px}
+#treeCount{font:500 12px var(--mono);color:var(--muted)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto}
+.legend span{display:inline-flex;align-items:center;gap:6px;font:700 10.5px var(--mono);color:var(--muted)}
+.legend i{width:12px;height:12px;border-radius:50%;border:1px solid}
+.lg1 i{background:var(--blue-dim);border-color:var(--blue)}
+.lg2 i{background:var(--violet-dim);border-color:var(--violet)}
+.lg3 i{background:var(--magenta-dim);border-color:var(--magenta)}
+.lg4 i{background:var(--green-dim);border-color:var(--green)}
+#treeInspect{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px dashed var(--line2);border-radius:12px;padding:10px 14px;margin-bottom:12px;min-height:52px;background:rgba(13,11,20,.4)}
+#treeInspect .ti-meta{font:500 12px var(--sans);color:var(--muted)}
+#treeInspect .ti-meta b{color:var(--amber)}
+#treeSvgWrap{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:14px;background:rgba(13,11,20,.45)}
+#treeSvg{display:block}
+.tnode{cursor:pointer}
+.tnode circle.core{transition:.2s}
+.tnode text{pointer-events:none}
+.tnode:hover circle.core{stroke-width:3}
+.tedge{transition:opacity .25s}
+#treeSvg.focus .tnode:not(.lit),#treeSvg.focus .tedge:not(.lit){opacity:.22}
+.tnode.lit circle.core{stroke-width:3}
+.tnode.current circle.core{stroke:#fff!important;stroke-width:3}
+.halo{animation:haloP 1.6s ease-in-out infinite}
+@keyframes haloP{0%,100%{opacity:.9}50%{opacity:.15}}
+.tree-note{font:500 13px var(--sans);color:var(--muted);margin-top:14px;max-width:820px}
+.tree-note b{color:var(--amber)}
+#treeMuNote{color:var(--magenta);font-weight:700}
+.paper{background:linear-gradient(170deg,var(--paper),var(--paper2));color:var(--paper-ink);border-radius:22px;padding:clamp(24px,4vw,44px);box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;overflow:hidden}
+.paper::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");opacity:.06;pointer-events:none}
+.paper h3{font:800 clamp(22px,3vw,30px) var(--serif);margin-bottom:12px}
+.paper p{font-size:14.5px;color:#3d3452;max-width:780px}
+.paper p b{color:var(--paper-ink)}
+#insightLocked{text-align:center;padding:16px 0}
+#insightLocked .big-lock{font-size:44px;display:block;margin-bottom:12px}
+.hint-ladder{display:flex;flex-direction:column;gap:10px;max-width:560px;margin:20px auto}
+.hint-btn{border:1px dashed #b3a48c;background:rgba(255,255,255,.35);border-radius:12px;padding:11px 16px;cursor:pointer;font:700 13px var(--sans);color:#5c4f2e;transition:.2s;text-align:left}
+.hint-btn:hover{background:rgba(255,181,71,.25);border-color:#c98f2e}
+.hint-text{display:none;font:500 13.5px var(--sans);color:#7a5210;padding:4px 8px 0}
+.hint-text.show{display:block;animation:vIn .4s ease}
+.paper .btn-primary{margin-top:8px}
+#insightBody{display:none}
+#insightBody.show{display:block;animation:vIn .6s ease}
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+.insight-card{border:1px solid #d8c9ab;border-radius:16px;padding:20px;background:rgba(255,255,255,.4)}
+.insight-card h4{font:800 17px var(--serif);margin-bottom:10px}
+.insight-card p{font-size:13.5px}
+.decision-box{border:2px solid #c98f2e;border-radius:16px;padding:18px 22px;margin:22px 0;background:rgba(255,181,71,.16)}
+.decision-box h4{font:800 16px var(--serif);margin-bottom:8px;color:#7a5210}
+.decision-box .formula{font:700 16px var(--mono);color:var(--paper-ink);background:rgba(255,255,255,.55);border-radius:10px;padding:10px 14px;display:inline-block;margin:6px 0}
+.paper .mod-table td{border-color:#d8c9ab;color:#3d3452}
+.paper .mod-table td:first-child.c1{color:#1d6fd1}.paper .mod-table td:first-child.c2{color:#6a55d8}
+.paper .mod-table td:first-child.c3{color:#d1247a}.paper .mod-table td:first-child.c4{color:#1d9a63}
+.diagram-wrap{margin:22px 0;text-align:center}
+.diagram-wrap svg{max-width:100%;height:auto}
+.diagram-cap{font:500 12.5px var(--sans);color:var(--paper-muted);margin-top:8px}
+footer{border-top:1px solid var(--line);padding:34px 0 46px;margin-top:30px}
+.foot-grid{display:flex;gap:26px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.foot-grid p{font:500 12.5px var(--sans);color:var(--muted2);max-width:520px}
+.shortcuts{display:flex;gap:14px;flex-wrap:wrap;font:500 12px var(--sans);color:var(--muted)}
+#wipeBtn{border:1px solid var(--line2);background:none;color:var(--muted2);font:500 12px var(--sans);border-radius:9px;padding:8px 14px;cursor:pointer;transition:.2s}
+#wipeBtn:hover{color:var(--danger);border-color:var(--magenta-bord)}
+#wipeBtn.arm{color:#fff;background:var(--danger);border-color:var(--danger)}
+#finaleNote{display:none;font:700 13px var(--sans);color:var(--green);margin-top:12px}
+#finaleNote.show{display:block}
+#toasts{position:fixed;top:76px;right:18px;z-index:90;display:flex;flex-direction:column;gap:10px;max-width:min(360px,90vw)}
+.toast{display:flex;align-items:center;gap:12px;border:1px solid var(--line2);border-left-width:4px;background:rgba(27,23,48,.95);backdrop-filter:blur(8px);border-radius:12px;padding:12px 16px;font:500 13px var(--sans);color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateX(30px);transition:.3s}
+.toast.show{opacity:1;transform:none}
+.toast.success{border-left-color:var(--green)}
+.toast.error{border-left-color:var(--danger)}
+.toast.info{border-left-color:var(--blue)}
+.toast.gold{border-left-color:var(--amber)}
+.toast button{flex-shrink:0;border:1px solid var(--amber-bord);background:var(--amber-dim);color:var(--amber);font:700 12px var(--sans);border-radius:8px;padding:6px 11px;cursor:pointer}
+.toast button:hover{background:rgba(255,181,71,.3)}
+@media (max-width:1080px){
+  .ws-grid{grid-template-columns:1fr}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-visual{min-height:220px}
+  .insight-grid{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .rule-grid{grid-template-columns:1fr 1fr}
+  .rc-desc{min-height:0}
+  .logo b{font-size:13px}
+  .logo small{display:none}
+  .nav-link{padding:8px 8px;font-size:12px}
+  #navbar{gap:8px}
+  .tiles.tl .tile{width:42px;height:50px;font-size:25px}
+  .hero h1 .mu-inline .tile{width:40px;height:48px;font-size:25px}
+  section{padding:40px 0}
+  #qbTarget{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  .reveal{opacity:1;transform:none}
+  .hero-anim{opacity:1;transform:none;animation:none}
+}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<canvas id="bgCanvas"></canvas>
+<div class="grain"></div>
+
+<nav id="navbar">
+  <a class="logo" href="#top">
+    <span class="logo-tiles"><span class="t-M">M</span><span class="t-I">I</span><span class="t-U">U</span></span>
+    <span><b>Лаборатория MU</b><small>формальные системы Поста</small></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="#workshop" data-sec="workshop">Мастерская</a>
+    <a class="nav-link" href="#checker" data-sec="checker">Проверка</a>
+    <a class="nav-link" href="#tree" data-sec="tree">Дерево</a>
+    <a class="nav-link" href="#insight" data-sec="insight">Инсайт</a>
+  </div>
+  <button id="progressBadge" title="Прогресс квестов">★ 0/6</button>
+  <button id="soundBtn" aria-label="Выключить звук" aria-pressed="true" title="Звук включён">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" stroke="none"/>
+      <g class="waves"><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></g>
+      <g class="cross" style="display:none"><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></g>
+    </svg>
+  </button>
+</nav>
+
+<main>
+<section id="top" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="overline hero-anim" style="--d:.05s">Гёдель · Эшер · Бах — глава I · система MIU</div>
+      <h1 class="hero-anim" style="--d:.15s">Можете ли вы получить
+        <span class="mu-inline"><span class="tile t-M">M</span><span class="tile t-U">U</span></span>?
+      </h1>
+      <p class="lead hero-anim" style="--d:.28s">Вам «дарена» одна строчка — аксиома <b>MI</b>. Четыре правила превращают её в новые теоремы.
+        Цель — <b>MU</b>. Но, возможно, настоящий ответ лежит не внутри системы, а снаружи — стоит лишь выпрыгнуть из неё.</p>
+      <div class="hero-ctas hero-anim" style="--d:.4s">
+        <button class="btn btn-primary" id="heroStart">▶ Начать вывод</button>
+        <button class="btn btn-ghost" id="heroCheck">Проверить строчку</button>
+      </div>
+      <div class="hero-meta hero-anim" style="--d:.5s">
+        <span>3 буквы</span><span>1 аксиома</span><span>4 правила</span><span>∞ теорем</span>
+      </div>
+    </div>
+    <div class="hero-visual hero-anim" style="--d:.35s">
+      <div class="hv-row">
+        <div><div class="hv-label">аксиома</div><div class="tiles tl"><span class="tile t-M">M</span><span class="tile t-I">I</span></div></div>
+        <div class="hv-arrow">⟶<em>?</em></div>
+        <div><div class="hv-label">цель</div><div class="tiles tl"><span class="tile t-M">M</span><span class="tile t-U">U</span></div></div>
+      </div>
+      <div class="hv-rules"><span>I</span><span>II</span><span>III</span><span>IV</span></div>
+      <div class="hv-label">правила I–IV · только вперёд · без исключений</div>
+    </div>
+  </div>
+</section>
+
+<section id="quests">
+  <div class="wrap">
+    <div class="sec-num reveal">Квесты · путь от аксиомы к пониманию</div>
+    <div class="quest-strip reveal" id="questStrip" style="--d:.1s"></div>
+  </div>
+</section>
+
+<section id="workshop">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">01 · Мастерская</div>
+      <h2>Режим M — работайте как машина</h2>
+      <p>Только правила, никакой смекалки: это «требование формальности». Недоступные правила заблокированы.
+        Каждая выведенная строчка попадает в вашу коллекцию теорем.</p>
+    </div>
+    <div class="ws-grid">
+      <div class="panel reveal">
+        <div id="questBanner">
+          <div id="qbTitle">Цель<small>квест</small></div>
+          <button id="qbHint">Подсказка</button>
+          <span id="qbSteps"></span>
+          <div id="qbTarget"></div>
+          <button class="btn btn-ghost btn-sm" id="muDare">Проверить MU →</button>
+          <div id="qbHintText"></div>
+        </div>
+        <h3>Текущая строчка <span class="tag tag-m">режим M</span></h3>
+        <div class="strip-zone">
+          <div id="tileStrip"></div>
+          <div id="armHint"></div>
+        </div>
+        <div class="ws-stats">
+          <div class="stat"><b id="statLen">2</b><span>длина</span></div>
+          <div class="stat si"><b id="statI">1</b><span>букв I</span></div>
+          <div class="stat su"><b id="statU">0</b><span>букв U</span></div>
+          <div class="mod-box"><span>I mod 3 · следите за остатком</span>
+            <div id="modDial">
+              <div class="md-dot zero" data-v="0">0<small id="zeroLabel">MU?</small></div>
+              <div class="md-dot" data-v="1">1</div>
+              <div class="md-dot" data-v="2">2</div>
+            </div>
+          </div>
+        </div>
+        <div class="mod-note">Удвоение переключает остаток 1↔2, вычёркивание троек его не меняет. Замечаете закономерность? Это уже режим I.</div>
+        <div class="rule-grid" id="ruleGrid">
+          <button class="rule-card r1" data-rule="1">
+            <span class="rc-key"><kbd>1</kbd></span>
+            <span class="rc-head"><span class="rc-badge">I</span><span class="rc-name">Добавить U</span></span>
+            <div class="rc-formula">xI → xIU</div>
+            <div class="rc-desc">Если строчка кончается на I — припишите U в конец.</div>
+            <div class="rc-avail"></div>
+          </button>
+          <button class="rule-card r2" data-rule="2">
+            <span class="rc-key"><kbd>2</kbd></span>
+            <span class="rc-head"><span class="rc-badge">II</span><span class="rc-name">Удвоить хвост</span></span>
+            <div class="rc-formula">Mx → Mxx</div>
+            <div class="rc-desc">Всё, что стоит после M, повторяется целиком.</div>
+            <div class="rc-avail"></div>
+          </button>
+          <button class="rule-card r3" data-rule="3">
+            <span class="rc-key"><kbd>3</kbd></span>
+            <span class="rc-head"><span class="rc-badge">III</span><span class="rc-name">III → U</span></span>
+            <div class="rc-formula">III → U</div>
+            <div class="rc-desc">Замените одно вхождение трёх I подряд на U. При нескольких вхождениях выберите позицию.</div>
+            <div class="rc-avail"></div>
+          </button>
+          <button class="rule-card r4" data-rule="4">
+            <span class="rc-key"><kbd>4</kbd></span>
+            <span class="rc-head"><span class="rc-badge">IV</span><span class="rc-name">Удалить UU</span></span>
+            <div class="rc-formula">UU → ε</div>
+            <div class="rc-desc">Вычеркните одну пару UU. При нескольких вхождениях выберите позицию.</div>
+            <div class="rc-avail"></div>
+          </button>
+        </div>
+        <div class="rule-footnote">Правила III и IV работают «по месту»: единственное вхождение применяется сразу, при нескольких — выберите позицию кнопкой с предпросмотром результата или кликом по подсветке в строчке.</div>
+        <div id="occChooser" hidden></div>
+        <div class="ws-controls">
+          <button class="btn btn-ghost btn-sm" id="undoBtn">↩ Отменить шаг <kbd>Ctrl+Z</kbd></button>
+          <button class="btn btn-ghost btn-sm" id="resetBtn">⟲ К аксиоме MI</button>
+          <span id="stepCount">шаг 0</span>
+        </div>
+        <details class="help">
+          <summary>Как играть?</summary>
+          <ol>
+            <li>Выберите квест сверху — или просто исследуйте систему.</li>
+            <li>Применяйте правила кнопками или клавишами <kbd>1</kbd>–<kbd>4</kbd>. Для III и IV: одно вхождение — сразу, несколько — выбор позиции с предпросмотром.</li>
+            <li>Каждая строчка сохраняется в коллекцию и в цепочку вывода справа.</li>
+            <li>Застряли? Введите строчку в «Проверку» — система объяснит, что возможно, а что нарушено.</li>
+          </ol>
+        </details>
+      </div>
+      <div class="side-col">
+        <div class="panel reveal" style="--d:.1s">
+          <h3>Вывод <span class="tag tag-m">шаг за шагом</span></h3>
+          <div id="chainList"></div>
+        </div>
+        <div class="panel reveal" style="--d:.2s">
+          <h3>Коллекция теорем · <span id="collectionCount">1</span></h3>
+          <div class="col-tools">
+            <input id="colFilter" type="text" placeholder="фильтр: MIU…" autocomplete="off">
+            <select id="colSort" title="Сортировка">
+              <option value="order">по порядку</option>
+              <option value="len">по длине</option>
+              <option value="alpha">А→Я</option>
+            </select>
+            <button id="colClear" title="Очистить коллекцию">🗑</button>
+          </div>
+          <div id="collectionList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="checker">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">02 · Проверка теоремности</div>
+      <h2>Алгоритм разрешения — «лакмусовая бумажка»</h2>
+      <p>Введите любую строчку. Система за конечное время скажет: теорема ли она, из чего и по какому правилу получается —
+        или какой именно инвариант нарушен. Кириллические М и У распознаются автоматически.</p>
+    </div>
+    <div class="check-panel reveal">
+      <form id="checkForm">
+        <input id="checkInput" type="text" maxlength="80" placeholder="например, MUIIU" autocomplete="off" spellcheck="false" aria-label="Строчка для проверки">
+        <button class="btn btn-primary" id="checkBtn" type="submit">Проверить ⏎</button>
+      </form>
+      <div class="check-meta"><span id="normPreview"></span><span id="liveCounts"></span></div>
+      <div class="ex-label">Попробуйте строчки из книги</div>
+      <div id="exampleChips"></div>
+      <div id="verdict">
+        <div class="v-empty">
+          <h3>Что проверяет система?</h3>
+          <ul>
+            <li><b>01</b> Алфавит: только буквы M, U, I — других символов в системе нет.</li>
+            <li><b>02</b> Структура: ровно одна M, и только в начале — правила не создают новых M.</li>
+            <li><b>03</b> Инвариант числа I: их количество никогда не делится на 3.</li>
+          </ul>
+          <small>Все три проверки завершаются за конечное время — это и есть алгоритм разрешения системы MIU.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tree">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">03 · Дерево теорем</div>
+      <h2>Джинн, у которого всё время на свете</h2>
+      <p>Джинн методично применяет все правила ко всем теоремам, уровень за уровнем (рис. 11 из книги).
+        Номер в кружке — правило, породившее теорему. Наведите на узел, кликните — загрузить вывод в мастерскую.</p>
+    </div>
+    <div class="tree-panel reveal">
+      <div class="tree-controls">
+        <label>Глубина <input type="range" id="treeDepth" min="1" max="5" step="1" value="4"><span id="treeDepthVal">4</span></label>
+        <span id="treeCount"></span>
+        <div class="legend">
+          <span class="lg1"><i></i>правило I</span><span class="lg2"><i></i>II</span>
+          <span class="lg3"><i></i>III</span><span class="lg4"><i></i>IV</span>
+        </div>
+      </div>
+      <div id="treeInspect"><span class="ti-meta">Наведите на узел — здесь появится строчка. <b>Клик</b> загружает её кратчайший вывод в мастерскую.</span></div>
+      <div id="treeSvgWrap"></div>
+      <p class="tree-note">Каждая теорема показана один раз — на глубине её кратчайшего вывода. Такой перебор — <b>не</b> алгоритм разрешения:
+        если строчки нет на дереве, ждать можно до скончания веков. <span id="treeMuNote">Растёт ли на этом дереве MU? Проверьте её в разделе «Проверка».</span></p>
+    </div>
+  </div>
+</section>
+
+<section id="insight">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-num">04 · Инсайт</div>
+      <h2>Режим I — выпрыгните из системы</h2>
+      <p>Второй лист бумаги: здесь вы работаете не как машина, а как мыслящее существо. Сначала попробуйте сами — ответ ниже спрятан не случайно.</p>
+    </div>
+    <div class="paper reveal">
+      <div id="insightLocked">
+        <span class="big-lock">🔒</span>
+        <h3>Ответ головоломки MU скрыт</h3>
+        <p style="margin:0 auto">Хофштадтер не зря просит вас сначала поиграть внутри системы. Возьмите три подсказки — или раскройте ответ сразу.</p>
+        <div class="hint-ladder">
+          <button class="hint-btn" data-hint="1">Подсказка 1 — на что смотреть?</button>
+          <div class="hint-text" id="hintT1">Следите за <b>числом букв I</b>. Правила I и IV его вообще не меняют. А что делают II и III?</div>
+          <button class="hint-btn" data-hint="2">Подсказка 2 — что делает удвоение?</button>
+          <div class="hint-text" id="hintT2">Удвоение ×2, а III → U вычитает ровно 3. Посмотрите на <b>остаток числа I при делении на 3</b>: как он может меняться?</div>
+          <button class="hint-btn" data-hint="3">Подсказка 3 — последний шаг</button>
+          <div class="hint-text" id="hintT3">В аксиоме MI одна I: остаток 1. Сколько I в MU? Ноль. Может ли остаток 1 или 2 когда-нибудь стать нулём?</div>
+        </div>
+        <button class="btn btn-primary" id="revealBtn">Раскрыть инсайт →</button>
+      </div>
+      <div id="insightBody">
+        <h3>MU невыводима. Вот доказательство — снаружи системы</h3>
+        <p>Каждая теорема начинается с M и содержит ровно одну M. Теперь считайте буквы I. Аксиома MI содержит <b>1</b> I.
+          Проследим, что правила делают с числом I по модулю 3:</p>
+        <table class="mod-table">
+          <tr><td class="c1">Правило I</td><td>n → n</td><td>остаток не меняется</td></tr>
+          <tr><td class="c2">Правило II</td><td>n → 2n</td><td>остаток 1 → 2, остаток 2 → 4 ≡ 1</td></tr>
+          <tr><td class="c3">Правило III</td><td>n → n − 3</td><td>остаток не меняется</td></tr>
+          <tr><td class="c4">Правило IV</td><td>n → n</td><td>остаток не меняется</td></tr>
+        </table>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 660 330" width="660" role="img" aria-label="Диаграмма остатков числа I по модулю 3">
+            <defs>
+              <marker id="arrV" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#6a55d8"/></marker>
+              <marker id="arrI" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#241d33"/></marker>
+            </defs>
+            <path d="M 216 88 C 300 34, 360 34, 444 88" fill="none" stroke="#6a55d8" stroke-width="2.5" marker-end="url(#arrV)"/>
+            <text x="330" y="42" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#6a55d8">II: удвоение, 1 → 2</text>
+            <path d="M 444 132 C 360 186, 300 186, 216 132" fill="none" stroke="#6a55d8" stroke-width="2.5" marker-end="url(#arrV)"/>
+            <text x="330" y="182" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#6a55d8">II: удвоение, 2 → 4 ≡ 1</text>
+            <path d="M 134 78 C 74 56, 74 164, 134 142" fill="none" stroke="#241d33" stroke-width="2" marker-end="url(#arrI)"/>
+            <text x="52" y="112" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#241d33">III: −3</text>
+            <path d="M 526 78 C 586 56, 586 164, 526 142" fill="none" stroke="#241d33" stroke-width="2" marker-end="url(#arrI)"/>
+            <text x="608" y="112" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#241d33">III: −3</text>
+            <circle cx="170" cy="110" r="46" fill="rgba(255,181,71,.35)" stroke="#c98f2e" stroke-width="2.5"/>
+            <text x="170" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="30" font-weight="700" fill="#241d33">1</text>
+            <text x="170" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="10.5" fill="#6b5f78">старт: MI</text>
+            <circle cx="490" cy="110" r="46" fill="rgba(87,168,255,.3)" stroke="#1d6fd1" stroke-width="2.5"/>
+            <text x="490" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="30" font-weight="700" fill="#241d33">2</text>
+            <text x="490" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="10.5" fill="#6b5f78">MII, MIIII…</text>
+            <path d="M 205 148 L 296 224" fill="none" stroke="#d1247a" stroke-width="2" stroke-dasharray="5 5" opacity=".55"/>
+            <path d="M 455 148 L 364 224" fill="none" stroke="#d1247a" stroke-width="2" stroke-dasharray="5 5" opacity=".55"/>
+            <text x="243" y="182" font-family="Inter,sans-serif" font-size="17" font-weight="700" fill="#d1247a">✕</text>
+            <text x="404" y="182" font-family="Inter,sans-serif" font-size="17" font-weight="700" fill="#d1247a">✕</text>
+            <circle cx="330" cy="256" r="40" fill="rgba(255,79,154,.18)" stroke="#d1247a" stroke-width="2.5" stroke-dasharray="7 5"/>
+            <text x="330" y="252" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="28" font-weight="700" fill="#d1247a">0</text>
+            <text x="330" y="276" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#d1247a">MU 🔒</text>
+            <text x="330" y="318" text-anchor="middle" font-family="Inter,sans-serif" font-size="12.5" font-weight="700" fill="#d1247a">остаток 0 недостижим ни одним правилом</text>
+          </svg>
+          <div class="diagram-cap">Узлы — возможные остатки числа I по модулю 3. Правила I и IV — петли на месте; III вычитает тройку; II перебрасывает между 1 и 2. В узел 0 не ведёт ни одна стрелка.</div>
+        </div>
+        <p>Стартуя с остатка <b>1</b>, система навсегда заперта в {1, 2}. В строчке MU <b>ноль</b> букв I — остаток 0.
+          Значит, <b>MU не теорема системы MIU</b>: машина, выводящая теоремы наобум, никогда не остановится, а человек,
+          заметивший инвариант, отвечает за минуту. В этом и есть разница между работой <b>внутри</b> системы и размышлением <b>о</b> системе.</p>
+        <div class="decision-box">
+          <h4>Алгоритм разрешения существует</h4>
+          <span class="formula">Mw — теорема ⇔ число I в w не делится на 3</span>
+          <p>Проверка в разделе «Проверка» — именно этот алгоритм: конечный, механический, верный. Она не ждёт, пока джинн вырастит дерево до нужной строчки, — она смотрит на систему снаружи.</p>
+        </div>
+        <div class="insight-grid">
+          <div class="insight-card">
+            <h4>Две тетради: режимы M и I</h4>
+            <p>На одном листе вы работаете «в качестве машины» — только правила (мастерская выше). На другом — «в качестве мыслящего существа»:
+              замечаете закономерности, считаете остатки, рассуждаете по-русски. Человеческий разум колеблется между этими режимами; машину можно сделать совершенно ненаблюдательной.</p>
+          </div>
+          <div class="insight-card">
+            <h4>А как же режим U?</h4>
+            <p>Хофштадтер обещает третий, «ультра-режим» — дзен-подход к вещам. Намёк уже здесь: вопрос «могу ли я получить MU?»
+              растворяется, когда вы видите, что сама постановка цели была ловушкой системы. Ответом оказывается не строчка, а взгляд снаружи.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <p>Учебная лаборатория по главе «MU-головоломка» книги Дугласа Хофштадтера <i>«Гёдель, Эшер, Бах»</i>.
+      Формальные системы продукции придуманы Эмилем Постом в 1920-х. Прогресс хранится локально в вашем браузере.</p>
+    <div class="shortcuts">
+      <span><kbd>1</kbd>–<kbd>4</kbd> правила</span>
+      <span><kbd>Ctrl+Z</kbd> отмена</span>
+      <span><kbd>Esc</kbd> снять выбор</span>
+      <span><kbd>⏎</kbd> проверить</span>
+    </div>
+    <button id="wipeBtn">Сбросить весь прогресс</button>
+  </div>
+  <div class="wrap"><div id="finaleNote">🎓 Система понята: вы поработали и в режиме M, и в режиме I. Дело осталось за режимом U.</div></div>
+</footer>
+
+<canvas id="fxCanvas"></canvas>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const ROMAN=['','I','II','III','IV'];
+const RULE_COLOR={1:'#57a8ff',2:'#8b7bff',3:'#ff4f9a',4:'#43dd93'};
+const LETTER_COLOR={M:'#ff4f9a',I:'#ffb547',U:'#57a8ff'};
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MAXLEN=512;
+function occurrences(s,sub){const r=[];let i=s.indexOf(sub);while(i!==-1){r.push(i);i=s.indexOf(sub,i+1);}return r;}
+function countCh(s,c){let n=0;for(const ch of s)if(ch===c)n++;return n;}
+function applyRule(s,id,pos){
+  switch(id){
+    case 1:return s.endsWith('I')?s+'U':null;
+    case 2:return s.length*2-1<=MAXLEN?'M'+s.slice(1)+s.slice(1):null;
+    case 3:return (pos!=null&&s.substr(pos,3)==='III')?s.slice(0,pos)+'U'+s.slice(pos+3):null;
+    case 4:return (pos!=null&&s.substr(pos,2)==='UU')?s.slice(0,pos)+s.slice(pos+2):null;
+  }
+  return null;
+}
+function outputs(s){
+  const o=[];
+  if(s.endsWith('I'))o.push({s:s+'U',r:1});
+  if(s.length*2-1<=MAXLEN)o.push({s:'M'+s.slice(1)+s.slice(1),r:2});
+  for(const p of occurrences(s,'III'))o.push({s:s.slice(0,p)+'U'+s.slice(p+3),r:3});
+  for(const p of occurrences(s,'UU'))o.push({s:s.slice(0,p)+s.slice(p+2),r:4});
+  return o;
+}
+function isTheorem(s){return /^[MIU]+$/.test(s)&&s[0]==='M'&&countCh(s,'M')===1&&countCh(s,'I')%3!==0;}
+const CYR={'М':'M','м':'M','У':'U','у':'U','І':'I','і':'I'};
+function normalize(raw){let out='';for(const ch of String(raw)){if(/\s/.test(ch))continue;out+=CYR[ch]||ch.toUpperCase();}return out;}
+function tilesHTML(s,cls){
+  const size=s.length<=14?'tl':s.length<=28?'tm':s.length<=64?'ts':'tx';
+  return '<div class="tiles '+size+(cls?' '+cls:'')+'">'+[...s].map((c,i)=>'<span class="tile t-'+c+'" data-i="'+i+'">'+c+'</span>').join('')+'</div>';
+}
+const LS='miu-lab-v1';
+const QUESTS=[
+  {id:1,title:'Первый шаг',target:'MIU',par:1,hint:'Строчка кончается на I. Какое правило приписывает U?'},
+  {id:2,title:'Удвоение',target:'MIIII',par:2,hint:'Правило II повторяет весь хвост после M: I → II → IIII.'},
+  {id:3,title:'Превращение',target:'MUI',par:3,hint:'Сначала нарастите четыре I, затем замените первые три на U.'},
+  {id:4,title:'Сокращение',target:'MUIIU',par:6,requireRule:4,hint:'Обязательно используйте правило IV! Например: MIIII → MIIIIU → MUIU → MUIUUIU → вычеркните UU.'},
+  {id:5,title:'Экспонента',target:'M'+'I'.repeat(16),par:4,hint:'1 → 2 → 4 → 8 → 16. Четыре удвоения — и хвост взрывается ростом.'},
+  {id:6,title:'Главный вопрос',target:'MU',impossible:true,hint:'Выведите MU… или докажите, что это невозможно: проверьте MU в разделе «Проверка» и раскройте инсайт.'}
+];
+let S={chain:[{s:'MI',r:0}],collection:{},quests:{},active:1,sound:true,insight:false,depth:4,finale:false};
+let armed=null,snapshot=null,colSnapshot=null,treeNodes=[],lastDerivation=null,lastNorm='';
+let playback={timer:null,i:0,steps:null,playing:false};
+const ruleToastAt={};
+function validChain(ch){
+  return Array.isArray(ch)&&ch.length>0&&ch[0]&&ch[0].s==='MI'&&ch.every(x=>x&&typeof x.s==='string'&&/^[MIU]+$/.test(x.s)&&x.s.length<=MAXLEN&&Number.isInteger(x.r)&&x.r>=0&&x.r<=4);
+}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem(LS)||'null');if(!d)return;
+    if(validChain(d.chain))S.chain=d.chain;
+    if(d.collection&&typeof d.collection==='object'){
+      for(const k in d.collection){const e=d.collection[k];if(/^[MIU]+$/.test(k)&&e&&validChain(e.chain)&&e.chain[e.chain.length-1].s===k)S.collection[k]=e;}
+    }
+    if(d.quests&&typeof d.quests==='object')S.quests=d.quests;
+    if(Number.isInteger(d.active)&&d.active>=1&&d.active<=6)S.active=d.active;
+    if(typeof d.sound==='boolean')S.sound=d.sound;
+    if(typeof d.insight==='boolean')S.insight=d.insight;
+    if(typeof d.finale==='boolean')S.finale=d.finale;
+    if(Number.isInteger(d.depth))S.depth=Math.min(5,Math.max(1,d.depth));
+  }catch(e){}
+}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+const cur=()=>S.chain[S.chain.length-1].s;
+function addToCollection(s,chain){
+  const e=S.collection[s];
+  if(!e||e.chain.length>chain.length)S.collection[s]={chain:chain.map(x=>({s:x.s,r:x.r})),t:Date.now()};
+}
+let AC=null,master=null;
+function audio(){
+  if(!S.sound)return null;
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.16;master.connect(AC.destination);}catch(e){return null;}}
+  if(AC.state==='suspended')AC.resume();
+  return AC;
+}
+function tone(f,o){
+  o=o||{};const ac=audio();if(!ac)return;
+  const t0=ac.currentTime+(o.t||0),d=o.d||.18;
+  const osc=ac.createOscillator(),g=ac.createGain();
+  osc.type=o.type||'sine';osc.frequency.setValueAtTime(f,t0);
+  if(o.slide)osc.frequency.exponentialRampToValueAtTime(o.slide,t0+d);
+  g.gain.setValueAtTime(.0001,t0);
+  g.gain.exponentialRampToValueAtTime(o.g||1,t0+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+  osc.connect(g);g.connect(master);osc.start(t0);osc.stop(t0+d+.05);
+}
+const sClick=()=>tone(880,{d:.06,g:.35});
+const sError=()=>{tone(165,{d:.14,type:'square',g:.4});tone(120,{t:.16,d:.18,type:'square',g:.35});};
+function sRule(id){
+  if(id===1){tone(523,{d:.14});tone(784,{t:.06,d:.12,g:.5});}
+  else if(id===2){tone(392,{d:.15});tone(784,{t:.07,d:.16,g:.6});}
+  else if(id===3){tone(659,{slide:494,d:.22,type:'triangle'});}
+  else{tone(494,{slide:262,d:.2,type:'triangle'});}
+}
+const sWin=()=>[523,659,784,1047].forEach((f,i)=>tone(f,{t:i*.09,d:.3,g:.7,type:i%2?'triangle':'sine'}));
+const sOk=()=>{tone(659,{d:.14,g:.6});tone(988,{t:.09,d:.2,g:.5});};
+const sUnlock=()=>{tone(196,{d:.8,g:.55});tone(392,{t:.15,d:.7,g:.4});tone(587,{t:.32,d:.6,g:.3,type:'triangle'});};
+function toast(msg,opt){
+  opt=opt||{};const box=$('#toasts');
+  while(box.children.length>=4)box.firstChild.remove();
+  const el=document.createElement('div');el.className='toast '+(opt.type||'info');
+  const span=document.createElement('span');span.innerHTML=msg;el.appendChild(span);
+  let gone=false;
+  const dismiss=()=>{if(gone)return;gone=true;el.classList.remove('show');setTimeout(()=>el.remove(),320);};
+  if(opt.action){const b=document.createElement('button');b.textContent=opt.action.label;b.addEventListener('click',()=>{opt.action.fn();dismiss();});el.appendChild(b);}
+  box.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  setTimeout(dismiss,opt.action?7000:4200);
+}
+const fx=$('#fxCanvas'),fctx=fx.getContext('2d');
+const bg=$('#bgCanvas'),bctx=bg.getContext('2d');
+let particles=[],glyphs=[],mouse={x:0,y:0},rafId=null,lastT=0;
+function sizeCanvases(){
+  const d1=Math.min(1.5,window.devicePixelRatio||1),d2=Math.min(2,window.devicePixelRatio||1);
+  bg.width=innerWidth*d1;bg.height=innerHeight*d1;bctx.setTransform(d1,0,0,d1,0,0);
+  fx.width=innerWidth*d2;fx.height=innerHeight*d2;fctx.setTransform(d2,0,0,d2,0,0);
+}
+function initGlyphs(){
+  glyphs=[];const n=reduced?18:42;
+  for(let i=0;i<n;i++){
+    const ch='MIU'[Math.floor(Math.random()*3)];
+    glyphs.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,ch,size:14+Math.random()*36,
+      a:.04+Math.random()*.08,vy:.06+Math.random()*.16,ph:Math.random()*6.28,depth:.3+Math.random()*.7,color:LETTER_COLOR[ch]});
+  }
+}
+function drawBG(t){
+  bctx.clearRect(0,0,innerWidth,innerHeight);
+  for(const g of glyphs){
+    if(!reduced){g.y-=g.vy;if(g.y<-60){g.y=innerHeight+60;g.x=Math.random()*innerWidth;}}
+    const dx=Math.sin(t*.0004+g.ph)*14+mouse.x*24*g.depth;
+    const dy=mouse.y*18*g.depth;
+    bctx.font='700 '+g.size+'px "JetBrains Mono",monospace';
+    bctx.globalAlpha=g.a;bctx.fillStyle=g.color;
+    bctx.fillText(g.ch,g.x+dx,g.y+dy);
+  }
+  bctx.globalAlpha=1;
+}
+function burst(x,y,n,colors){
+  if(reduced)return;
+  colors=colors||Object.values(LETTER_COLOR).concat(['#8b7bff','#43dd93']);
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2,sp=140+Math.random()*380;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-220,rot:Math.random()*6.28,vr:(Math.random()-.5)*8,
+      ch:'MIU'[Math.floor(Math.random()*3)],color:colors[Math.floor(Math.random()*colors.length)],
+      size:13+Math.random()*17,life:1.5+Math.random()*.9});
+  }
+}
+function burstAt(el,n,colors){
+  if(!el){burst(innerWidth/2,innerHeight/3,n,colors);return;}
+  const r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,n,colors);
+}
+function stepFx(dt){
+  fctx.clearRect(0,0,innerWidth,innerHeight);
+  particles=particles.filter(p=>p.life>0&&p.y<innerHeight+60);
+  for(const p of particles){
+    p.life-=dt;p.vy+=880*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rot+=p.vr*dt;
+    fctx.save();fctx.translate(p.x,p.y);fctx.rotate(p.rot);
+    fctx.globalAlpha=Math.max(0,Math.min(1,p.life/.5));
+    fctx.font='700 '+p.size+'px "JetBrains Mono",monospace';
+    fctx.fillStyle=p.color;fctx.textAlign='center';fctx.fillText(p.ch,0,0);fctx.restore();
+  }
+  fctx.globalAlpha=1;
+}
+function loop(t){
+  const dt=Math.min(.05,(t-lastT)/1000||.016);lastT=t;
+  drawBG(t);stepFx(dt);
+  rafId=requestAnimationFrame(loop);
+}
+function startLoop(){if(rafId==null&&!reduced){lastT=performance.now();rafId=requestAnimationFrame(loop);}}
+function stopLoop(){if(rafId!=null){cancelAnimationFrame(rafId);rafId=null;}}
+document.addEventListener('visibilitychange',()=>{document.hidden?stopLoop():startLoop();});
+window.addEventListener('resize',()=>{sizeCanvases();if(reduced)drawBG(0);});
+window.addEventListener('pointermove',e=>{mouse.x=e.clientX/innerWidth-.5;mouse.y=e.clientY/innerHeight-.5;},{passive:true});
+function shortDerivation(target){
+  const nodes=[{s:'MI',r:0,p:-1}],seen=new Set(['MI']);
+  if(target==='MI')return[{s:'MI',r:0}];
+  let frontier=[0];
+  for(let d=0;d<7&&nodes.length<6000;d++){
+    const next=[];
+    for(const idx of frontier){
+      for(const o of outputs(nodes[idx].s)){
+        if(seen.has(o.s))continue;
+        seen.add(o.s);nodes.push({s:o.s,r:o.r,p:idx});
+        const ni=nodes.length-1;
+        if(o.s===target){
+          const ch=[];let i=ni;
+          while(i>=0){ch.push({s:nodes[i].s,r:nodes[i].r});i=nodes[i].p;}
+          return ch.reverse();
+        }
+        next.push(ni);
+      }
+    }
+    frontier=next;
+  }
+  return null;
+}
+function constructiveDerivation(target){
+  const w=target.slice(1),n=countCh(w,'I'),u=countCh(w,'U'),need=n+3*u;
+  let k=0,p=1;
+  while(p<need||p%3!==n%3){p*=2;k++;}
+  const steps=[{s:'MI',r:0}];let c='MI';
+  const push=(r,pos)=>{c=applyRule(c,r,pos);steps.push({s:c,r});};
+  for(let i=0;i<k;i++)push(2);
+  let L=p,E=L-need;
+  if(E%6===3){push(1);push(3,L-2);push(4,L-2);L-=3;E-=3;}
+  while(E>0){push(3,L-5);push(3,L-4);push(4,L-5);L-=6;E-=6;}
+  const parts=w.split('U');let off=1;
+  for(let i=0;i<parts.length;i++){off+=parts[i].length;if(i<parts.length-1){push(3,off);off+=1;}}
+  return steps;
+}
+function findDerivation(target){return shortDerivation(target)||constructiveDerivation(target);}
+function predecessors(s){
+  const seen=new Set(),out=[];
+  const add=(p,r)=>{const k=r+':'+p;if(!seen.has(k)&&isTheorem(p)){seen.add(k);out.push({s:p,r});}};
+  if(s.endsWith('U'))add(s.slice(0,-1),1);
+  const t=s.slice(1);
+  if(t.length>0&&t.length%2===0&&t.slice(0,t.length/2)===t.slice(t.length/2))add('M'+t.slice(0,t.length/2),2);
+  for(let i=0;i<s.length;i++)if(s[i]==='U')add(s.slice(0,i)+'III'+s.slice(i+1),3);
+  for(let i=0;i<=s.length;i++)add(s.slice(0,i)+'UU'+s.slice(i),4);
+  return out.slice(0,12);
+}
+function renderStrip(fresh){
+  const s=cur(),strip=$('#tileStrip');
+  strip.innerHTML=tilesHTML(s);
+  strip.classList.remove('arming');
+  if(fresh&&!reduced){
+    const tiles=strip.querySelectorAll('.tile');
+    const from=fresh.from!=null?fresh.from:tiles.length-1;
+    for(let i=Math.max(0,from);i<tiles.length;i++)tiles[i].classList.add('fresh');
+  }
+  if(armed){
+    const sub=armed===3?'III':'UU',occ=occurrences(s,sub);
+    if(occ.length===0){armed=null;}
+    else{
+      strip.classList.add('arming');
+      for(const p of occ)for(let k=0;k<sub.length;k++){
+        const el=strip.querySelector('[data-i="'+(p+k)+'"]');
+        if(el){el.classList.add('occ');el.dataset.pos=p;}
+      }
+      $('#armHint').textContent='Правило '+ROMAN[armed]+': вхождений «'+sub+'» — '+occ.length+'. Выберите кнопкой ниже (виден результат) или кликните подсветку в строчке. Esc — отмена.';
+      const f=strip.querySelector('.tile.occ');
+      if(f)strip.scrollTop=Math.max(0,f.offsetTop-24);
+      return;
+    }
+  }
+  $('#armHint').textContent='';
+}
+function renderStats(){
+  const s=cur(),nI=countCh(s,'I');
+  $('#statLen').textContent=s.length;
+  $('#statI').textContent=nI;
+  $('#statU').textContent=countCh(s,'U');
+  const m=nI%3;
+  $$('#modDial .md-dot').forEach(d=>d.classList.toggle('on',+d.dataset.v===m));
+  $('#zeroLabel').textContent=S.insight?'🔒':'MU?';
+}
+function ruleHowTo(id){
+  const s=cur();
+  if(id===1)return 'Правило I применимо только к строчке с I на конце. Сейчас последний символ — «'+s.slice(-1)+'».';
+  if(id===2)return 'Достигнут лимит длины '+MAXLEN+' — удвоенный хвост не помещается. Сократите строчку правилами III/IV.';
+  if(id===3)return 'Нужны три I подряд. Нарастите их правилом II: MI → MII → MIIII — и правило III станет доступно.';
+  return 'Нужна пара UU. Пример: MIIII → (I) MIIIIU → (III, позиция 3) MIUU — и правило IV станет доступно.';
+}
+function renderRules(){
+  const s=cur();
+  const avail={1:s.endsWith('I'),2:s.length*2-1<=MAXLEN,3:occurrences(s,'III').length,4:occurrences(s,'UU').length};
+  $$('.rule-card').forEach(card=>{
+    const id=+card.dataset.rule,a=card.querySelector('.rc-avail');
+    let ok,text;
+    if(id===1){ok=avail[1];text=ok?'✓ применимо':'✗ нужен I на конце';}
+    else if(id===2){ok=avail[2];text=ok?'✓ применимо всегда':'✗ лимит '+MAXLEN+' символов';}
+    else{ok=avail[id]>0;text=ok?(avail[id]===1?'✓ 1 вхождение · применится сразу':'✓ вхождений: '+avail[id]+' · выбор позиции'):'✗ нет '+(id===3?'III':'UU')+' — как создать?';}
+    card.classList.toggle('unavailable',!ok);
+    card.setAttribute('aria-disabled',String(!ok));
+    card.title=ok?'':ruleHowTo(id);
+    a.textContent=text;a.className='rc-avail '+(ok?'ok':'no');
+    card.classList.toggle('armed',armed===id);
+  });
+}
+function renderChooser(){
+  const box=$('#occChooser');
+  if(!armed){box.hidden=true;box.innerHTML='';return;}
+  const s=cur(),sub=armed===3?'III':'UU',occ=occurrences(s,sub);
+  if(!occ.length){box.hidden=true;box.innerHTML='';return;}
+  const shown=occ.slice(0,12);
+  box.hidden=false;
+  box.innerHTML='<div class="oc-head"><b>Правило '+ROMAN[armed]+': выберите вхождение '+sub+'</b><span>от позиции зависит результат — сравните превью</span><button type="button" id="ocCancel">Отмена · Esc</button></div><div class="oc-list">'+
+    shown.map((p,i)=>{
+      const res=applyRule(s,armed,p),show=res.length>26?res.slice(0,26)+'…':res;
+      return '<button type="button" class="occ-choice" data-pos="'+p+'"><span class="oc-n">'+(i+1)+'</span><span class="oc-body"><span class="oc-pos">'+sub+' на позиции '+(p+1)+'</span><span class="oc-res">→ '+show+'</span></span></button>';
+    }).join('')+
+    (occ.length>12?'<span class="oc-more">Показаны первые 12 из '+occ.length+'. Остальные выбираются кликом по подсветке в строчке.</span>':'')+
+    '</div>';
+}
+function renderChain(){
+  const list=$('#chainList'),n=S.chain.length;
+  list.innerHTML=S.chain.map((st,i)=>{
+    const rule=st.r?'<span class="cr-r r'+st.r+'">из ('+i+') · '+ROMAN[st.r]+'</span>':'<span class="cr-r">аксиома</span>';
+    const trunc=i<n-1?'<button data-act="trunc" data-i="'+i+'" title="Вернуться к этому шагу">↩</button>':'';
+    return '<div class="chain-row"><span class="cr-n">('+(i+1)+')</span><span class="cr-s">'+st.s+'</span>'+rule+
+      '<span class="cr-tools"><button data-act="check" data-s="'+st.s+'" title="Проверить эту строчку">⌕</button>'+trunc+'</span></div>';
+  }).join('');
+  list.scrollTop=list.scrollHeight;
+  $('#stepCount').textContent='шаг '+(n-1);
+  $('#undoBtn').disabled=n<=1;
+}
+let colFilterVal='';
+function renderCollection(){
+  const entries=Object.keys(S.collection).map(k=>({s:k,...S.collection[k]}));
+  $('#collectionCount').textContent=entries.length;
+  let arr=entries.filter(e=>e.s.includes(colFilterVal.toUpperCase()));
+  const sort=$('#colSort').value;
+  if(sort==='len')arr.sort((a,b)=>a.s.length-b.s.length||a.s.localeCompare(b.s));
+  else if(sort==='alpha')arr.sort((a,b)=>a.s.localeCompare(b.s));
+  else arr.sort((a,b)=>a.t-b.t);
+  const shown=arr.slice(0,80);
+  $('#collectionList').innerHTML=shown.length?shown.map(e=>
+    '<button class="col-chip" data-s="'+e.s+'" title="'+e.s+' · вывод из '+(e.chain.length-1)+' шагов — кликните, чтобы загрузить">'+
+    (e.s.length>12?e.s.slice(0,12)+'…':e.s)+'<i>'+e.s.length+'</i></button>').join('')+
+    (arr.length>80?'<span class="col-empty">…и ещё '+(arr.length-80)+'</span>':'')
+    :'<span class="col-empty">Ничего не найдено. Выводите новые теоремы!</span>';
+}
+function activeQuest(){return QUESTS.find(q=>q.id===S.active)||QUESTS[0];}
+function renderBanner(){
+  const q=activeQuest(),st=S.quests[q.id];
+  $('#qbTitle').innerHTML='Квест '+q.id+' · '+esc(q.title)+(st&&st.done?' <span style="color:var(--green)">✓</span>':'')+'<small>цель ниже</small>';
+  $('#qbTarget').innerHTML=tilesHTML(q.target,'mini');
+  $('#qbSteps').textContent=q.impossible?'выводимо ли?':'шагов: '+(S.chain.length-1)+' · ★★★ ≤ '+q.par+(q.requireRule?' · нужно правило '+ROMAN[q.requireRule]:'');
+  $('#qbHintText').textContent=q.hint;$('#qbHintText').classList.remove('show');
+  $('#muDare').classList.toggle('show',!!q.impossible);
+}
+function renderQuests(){
+  $('#questStrip').innerHTML=QUESTS.map(q=>{
+    const st=S.quests[q.id],done=st&&st.done;
+    const starsN=Math.min(3,Math.max(1,(st&&st.stars)||3));
+    const stars=done?'★'.repeat(starsN)+'☆'.repeat(3-starsN):'';
+    return '<button class="quest-card'+(q.id===S.active?' active':'')+(done?' done':'')+(q.impossible?' impossible':'')+'" data-q="'+q.id+'">'+
+      '<div class="qc-top"><span class="qc-num">КВЕСТ '+q.id+'</span><span class="qc-state">'+(done?'✓':q.impossible?'?':'○')+'</span></div>'+
+      '<div class="qc-title">'+esc(q.title)+'</div>'+tilesHTML(q.target,'micro')+
+      '<div class="qc-par">'+(q.impossible?'выведите… или поймите':('★★★ ≤ '+q.par+' шагов'+(q.requireRule?' · с правилом '+ROMAN[q.requireRule]:'')))+
+      (done?' <span class="qc-stars">'+stars+'</span>':'')+'</div></button>';
+  }).join('');
+  const done=QUESTS.filter(q=>S.quests[q.id]&&S.quests[q.id].done).length;
+  $('#progressBadge').textContent='★ '+done+'/6';
+  $('#finaleNote').classList.toggle('show',!!S.finale);
+}
+function updateTreeMarks(){
+  const svg=$('#treeSvg');if(!svg)return;
+  svg.querySelectorAll('.tnode').forEach(n=>{
+    n.classList.toggle('current',n.dataset.s===cur());
+    const halo=n.querySelector('.halo');
+    if(halo)halo.style.display=n.dataset.s===activeQuest().target?'':'none';
+  });
+}
+function renderAll(fresh){
+  renderStrip(fresh);renderStats();renderRules();renderChooser();renderChain();renderCollection();renderBanner();renderQuests();updateTreeMarks();
+}
+function shakeRule(id){
+  const card=$('.rule-card[data-rule="'+id+'"]');if(!card)return;
+  card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');
+}
+function ruleUnavailable(id){
+  sError();shakeRule(id);
+  const now=Date.now();
+  if(now-(ruleToastAt[id]||0)>3500){
+    ruleToastAt[id]=now;
+    toast(ruleHowTo(id),{type:'info'});
+  }
+}
+function apply(id,pos){
+  const s=cur(),ns=applyRule(s,id,pos);
+  if(ns==null){ruleUnavailable(id);return;}
+  const from=id===1||id===2?s.length:(pos||0);
+  S.chain.push({s:ns,r:id});armed=null;
+  addToCollection(ns,S.chain);
+  sRule(id);renderAll({from});
+  checkQuests();save();
+}
+function armOrApply(id){
+  const s=cur();
+  if(id===1||id===2){armed=null;apply(id);return;}
+  const occ=occurrences(s,id===3?'III':'UU');
+  if(occ.length===0){ruleUnavailable(id);return;}
+  if(occ.length===1){armed=null;apply(id,occ[0]);return;}
+  armed=armed===id?null:id;sClick();renderStrip();renderRules();renderChooser();
+}
+function undo(){
+  if(S.chain.length<=1)return;
+  S.chain.pop();armed=null;sClick();renderAll();save();
+}
+function truncate(idx){
+  snapshot=S.chain.map(x=>({s:x.s,r:x.r}));
+  S.chain=S.chain.slice(0,idx+1);armed=null;renderAll();save();
+  toast('Цепочка сокращена до шага '+idx+'.',{type:'info',action:{label:'Вернуть',fn:()=>{if(snapshot){S.chain=snapshot;snapshot=null;renderAll();save();}}}});
+}
+function resetChain(){
+  if(S.chain.length<=1)return;
+  snapshot=S.chain.map(x=>({s:x.s,r:x.r}));
+  S.chain=[{s:'MI',r:0}];armed=null;sClick();renderAll();save();
+  toast('Возврат к аксиоме MI. Коллекция сохранена.',{type:'info',action:{label:'Вернуть',fn:()=>{if(snapshot){S.chain=snapshot;snapshot=null;renderAll();save();}}}});
+}
+function loadChain(chain,msg,scroll){
+  S.chain=chain.map(x=>({s:x.s,r:x.r}));armed=null;
+  addToCollection(cur(),S.chain);
+  renderAll({from:0});checkQuests();save();sClick();
+  if(scroll)$('#workshop').scrollIntoView({behavior:reduced?'auto':'smooth'});
+  if(msg)toast(msg,{type:'success'});
+}
+function checkQuests(){
+  const s=cur(),steps=S.chain.length-1,used=new Set(S.chain.map(x=>x.r));
+  for(const q of QUESTS){
+    if(q.impossible)continue;
+    if(s===q.target&&(!q.requireRule||used.has(q.requireRule))){
+      const stars=steps<=q.par?3:steps<=q.par+2?2:1;
+      const st=S.quests[q.id]||{done:false,best:999,stars:0};
+      if(!st.done||stars>st.stars){
+        const newly=!st.done;
+        S.quests[q.id]={done:true,best:Math.min(st.best==null?999:st.best,steps),stars:Math.max(st.stars||0,stars)};
+        celebrate(q,stars,newly);
+      }else if(steps<(st.best==null?999:st.best)){S.quests[q.id].best=steps;}
+    }
+  }
+}
+function celebrate(q,stars,newly){
+  sWin();burstAt($('#questBanner'),newly?70:30);
+  $('#progressBadge').classList.remove('pop');void $('#progressBadge').offsetWidth;$('#progressBadge').classList.add('pop');
+  const next=QUESTS.find(x=>!S.quests[x.id]||!S.quests[x.id].done);
+  toast((newly?'Квест '+q.id+' «'+q.title+'» пройден! ':'Улучшено: ')+ '★'.repeat(stars),
+    {type:'gold',action:next?{label:'Следующая цель →',fn:()=>{S.active=next.id;renderAll();save();$('#questBanner').scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});}}:null});
+  renderQuests();renderBanner();save();
+  grandFinaleCheck();
+}
+function grandFinaleCheck(){
+  if(S.finale)return;
+  if(QUESTS.every(q=>S.quests[q.id]&&S.quests[q.id].done)){
+    S.finale=true;save();
+    setTimeout(()=>{burst(innerWidth*.3,innerHeight*.25,90);burst(innerWidth*.7,innerHeight*.3,90);sWin();
+      toast('🎓 Все шесть квестов закрыты. Вы поработали в режиме M — и выпрыгнули в режим I.',{type:'gold'});
+      renderQuests();},700);
+  }
+}
+function unlockInsight(fromMU){
+  const was=S.insight;S.insight=true;
+  $('#insightLocked').style.display='none';$('#insightBody').classList.add('show');
+  $('#treeMuNote').textContent='Ответ известен: MU не растёт на этом дереве — ни на одном уровне. Число I в теореме никогда не делится на 3.';
+  renderStats();
+  const st=S.quests[6];
+  if(!st||!st.done){
+    S.quests[6]={done:true,best:0,stars:3};
+    sUnlock();burstAt(fromMU?$('#verdict'):$('#insightBody'),80,['#ff4f9a','#8b7bff','#ffb547']);
+    toast('Главный вопрос закрыт: MU невыводима. ★★★',{type:'gold'});
+    renderQuests();renderBanner();
+    $('#progressBadge').classList.remove('pop');void $('#progressBadge').offsetWidth;$('#progressBadge').classList.add('pop');
+    grandFinaleCheck();
+  }else if(!was){sUnlock();}
+  save();
+}
+function analyze(norm){
+  const bad=[...new Set([...norm].filter(c=>!'MIU'.includes(c)))];
+  const nM=countCh(norm,'M'),nI=countCh(norm,'I'),nU=countCh(norm,'U');
+  const alphaOk=norm.length>0&&bad.length===0;
+  const structOk=norm[0]==='M'&&nM===1;
+  const modOk=nI%3!==0;
+  return{norm,bad,nM,nI,nU,alphaOk,structOk,modOk,ok:alphaOk&&structOk&&modOk};
+}
+function ppRow(ok,label,val){
+  return '<div class="pp-row"><span class="pp-mark '+(ok?'y':'n')+'">'+(ok?'✓':'✗')+'</span>'+label+'<span class="pp-val">'+val+'</span></div>';
+}
+function modTableHTML(){
+  return '<table class="mod-table">'+
+    '<tr><td class="c1">Правило I</td><td>n → n</td><td>остаток тот же</td></tr>'+
+    '<tr><td class="c2">Правило II</td><td>n → 2n</td><td>1 → 2, а 2 → 4 ≡ 1</td></tr>'+
+    '<tr><td class="c3">Правило III</td><td>n → n − 3</td><td>остаток тот же</td></tr>'+
+    '<tr><td class="c4">Правило IV</td><td>n → n</td><td>остаток тот же</td></tr></table>';
+}
+function stopPlayback(){
+  if(playback.timer){clearInterval(playback.timer);playback.timer=null;}
+  playback.playing=false;
+  const b=$('#playBtn');if(b)b.textContent='▶ Проиграть вывод';
+}
+function renderVerdict(a,raw){
+  stopPlayback();playback.i=0;playback.steps=null;lastDerivation=null;lastNorm=a.norm;
+  const v=$('#verdict');
+  const counts='<div class="v-counts"><span>длина: '+a.norm.length+'</span><span style="color:var(--magenta)">M: '+a.nM+'</span><span style="color:var(--amber)">I: '+a.nI+'</span><span style="color:var(--blue)">U: '+a.nU+'</span><span>I mod 3 = '+(a.nI%3)+'</span></div>';
+  const passport='<div class="passport">'+
+    ppRow(a.alphaOk,'Алфавит {M, U, I}',a.bad.length?'чужие: '+esc(a.bad.join(' ')):(a.norm.length?'чисто':'пусто'))+
+    ppRow(a.structOk,'Ровно одна M — в начале','M: '+a.nM+(a.norm.length?', первая: '+esc(a.norm[0]):''))+
+    ppRow(a.modOk,'Число I не кратно трём',a.nI+' I → остаток '+(a.nI%3))+'</div>';
+  let html='';
+  if(a.ok){
+    lastDerivation=findDerivation(a.norm);
+    const steps=lastDerivation.length-1;
+    const preds=predecessors(a.norm);
+    html='<div class="verdict-card ok"><div class="v-head"><span class="v-icon">✓</span><div><h3>Да, это теорема!</h3>'+
+      '<p><b>'+a.norm+'</b> '+(steps===0?'— сама аксиома, «дарёная» теорема.':('выводима из MI за '+steps+' '+plural(steps,'шаг','шага','шагов')+'.'))+'</p></div></div>'+
+      counts+passport;
+    if(preds.length){
+      html+='<div class="preds"><h4>По какому правилу получается — прямые предшественники</h4>'+
+        preds.map(p=>'<button class="pred-chip" data-act="pred" data-s="'+p.s+'" title="Загрузить вывод «'+p.s+'» в мастерскую"><span class="cr-s">'+p.s+'</span><span class="cr-r r'+p.r+'">→ правило '+ROMAN[p.r]+'</span></button>').join('')+
+        '<div style="font:500 11.5px var(--sans);color:var(--muted2)">Клик по предшественнику загружает его вывод в мастерскую.</div></div>';
+    }
+    html+='<div class="deriv"><div class="deriv-head"><h4>Вывод из аксиомы · '+steps+' '+plural(steps,'шаг','шага','шагов')+'</h4>'+
+      (steps>0?'<button class="btn btn-ghost btn-sm" data-act="play" id="playBtn">▶ Проиграть вывод</button>':'')+
+      '<button class="btn btn-primary btn-sm" data-act="load">В мастерскую →</button></div>'+
+      '<div id="pbStrip"><div id="pbMeta"></div><div id="pbTiles"></div></div>'+
+      '<div class="deriv-rows" id="derivRows">'+lastDerivation.map((st,i)=>
+        '<div class="vd-row" id="vd-row-'+i+'"><span class="cr-n">('+(i+1)+')</span><span class="cr-s">'+st.s+'</span>'+
+        (st.r?'<span class="cr-r r'+st.r+'">из ('+i+') · правило '+ROMAN[st.r]+'</span>':'<span class="cr-r">аксиома</span>')+'</div>').join('')+
+      '</div>'+(steps>0&&lastDerivation.length>8?'<div style="font:500 11px var(--sans);color:var(--muted2);margin-top:8px">Показан один из корректных выводов; кратчайший найден перебором до глубины 7.</div>':'')+'</div></div>';
+    sOk();
+  }else{
+    let viols='';
+    if(!a.alphaOk){
+      viols+='<div class="violation"><h4>'+(a.norm.length===0?'Пустая строчка':'Нарушен алфавит')+'</h4><p>'+
+        (a.norm.length===0?'Пустая строчка не теорема: аксиома — MI, и ни одно правило не удаляет M.'
+        :'В строчке есть символы вне алфавита: <b>'+esc(a.bad.join(' '))+'</b>. Система MIU использует только три буквы — M, U, I. (Кириллические М и У распознаются, латинская I — тоже; попробуйте её вместо похожих символов.)')+'</p></div>';
+    }
+    if(a.alphaOk&&!a.structOk){
+      if(a.norm[0]!=='M'){
+        viols+='<div class="violation"><h4>Нарушен инвариант первой буквы</h4><p>Аксиома MI начинается с <b>M</b>, и ни одно из правил I–IV не меняет первый символ: правило I дописывает U в конец, II удваивает лишь хвост после M, III и IV работают внутри. Значит, <b>все теоремы начинаются с M</b> — а ваша строчка с «'+esc(a.norm[0])+'». Так же невозможно получить и просто U.</p></div>';
+      }else{
+        viols+='<div class="violation"><h4>Нарушен инвариант единственности M</h4><p>В вашей строчке <b>'+a.nM+' буквы M</b>. Правило II превращает Mx в Mxx — удваивается только хвост x, новые M никогда не создаются. В каждой теореме <b>ровно одна M, в самом начале</b>.</p></div>';
+      }
+    }
+    if(a.alphaOk&&!a.modOk){
+      viols+='<div class="violation"><h4>Нарушен инвариант числа I — ключевой!</h4><p>Букв I: <b>'+a.nI+'</b> — делится на 3. Посмотрите, что правила делают с числом I:</p>'+
+        modTableHTML()+
+        '<p>Старт — аксиома с <b>одной</b> I (остаток 1). Удвоение лишь перебрасывает остаток 1 ↔ 2, вычитание троек и правила I/IV остаток не меняют. <b>Остаток 0 недостижим навсегда.</b> Поэтому ваша строчка — не теорема, сколько бы джинн ни удлинял и ни сокращал другие.</p></div>';
+    }
+    const mu=a.norm==='MU';
+    html='<div class="verdict-card no"><div class="v-head"><span class="v-icon">✗</span><div><h3>Не теорема</h3><p><b>'+esc(a.norm||'∅')+'</b> невыводима из аксиомы MI.</p></div></div>'+
+      (raw&&normalize(raw)!==a.norm?'<p style="font:500 12px var(--mono);color:var(--muted);margin-bottom:8px">вы ввели: '+esc(raw)+' → распознано: '+esc(a.norm)+'</p>':'')+
+      counts+passport+
+      (mu?'<div class="mu-banner"><span class="lock">🔒</span><h4>MU — не теорема. Никогда.</h4><p>Это и есть ответ головоломки: в MU ноль букв I, а число I в теореме никогда не кратно трём. Машина искала бы вечно — человек отвечает, взглянув на систему снаружи.</p><button class="btn btn-primary btn-sm" data-act="insight">Открыть полное доказательство →</button></div>':'')+
+      viols+'</div>';
+    sError();
+  }
+  v.innerHTML=html;
+  if(a.norm==='MU')unlockInsight(true);
+}
+function plural(n,a,b,c){const m=n%100;if(m>=11&&m<=14)return c;const k=n%10;return k===1?a:k>=2&&k<=4?b:c;}
+function runCheck(raw){renderVerdict(analyze(normalize(raw)),raw);}
+function pbShow(i){
+  const steps=playback.steps;if(!steps)return;
+  const st=steps[i];
+  $('#pbStrip').classList.add('show');
+  $('#pbMeta').textContent='шаг '+i+' из '+(steps.length-1)+(st.r?' · правило '+ROMAN[st.r]:' · аксиома');
+  $('#pbTiles').innerHTML=tilesHTML(st.s,'mini');
+  $$('#derivRows .vd-row').forEach(r=>r.classList.remove('playing'));
+  const row=$('#vd-row-'+i);
+  if(row){row.classList.add('playing');const box=$('#derivRows');box.scrollTop=row.offsetTop-box.clientHeight/2+row.clientHeight/2;}
+}
+function togglePlay(){
+  if(!lastDerivation||lastDerivation.length<2)return;
+  const b=$('#playBtn');
+  if(playback.playing){clearInterval(playback.timer);playback.timer=null;playback.playing=false;b.textContent='▶ Продолжить';return;}
+  if(!playback.steps||playback.steps!==lastDerivation||playback.i>=lastDerivation.length-1){playback.steps=lastDerivation;playback.i=0;}
+  playback.playing=true;b.textContent='⏸ Пауза';sClick();pbShow(playback.i);
+  const tick=()=>{
+    if(playback.i>=playback.steps.length-1){stopPlayback();b.textContent='▶ Ещё раз';sOk();return;}
+    playback.i++;pbShow(playback.i);tone(440+playback.i*18,{d:.05,g:.2});
+  };
+  playback.timer=setInterval(tick,lastDerivation.length>40?120:320);
+}
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(tag,attrs){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);return el;}
+function buildTree(depth){
+  const nodes=[{s:'MI',d:0,r:0,p:-1}],seen=new Set(['MI']);
+  let frontier=[0];
+  for(let d=1;d<=depth;d++){
+    const next=[];
+    for(const idx of frontier){
+      for(const o of outputs(nodes[idx].s)){
+        if(seen.has(o.s))continue;
+        seen.add(o.s);nodes.push({s:o.s,d,r:o.r,p:idx});next.push(nodes.length-1);
+      }
+    }
+    frontier=next;
+  }
+  return nodes;
+}
+function renderTree(){
+  treeNodes=buildTree(S.depth);
+  const rows=[];for(let d=0;d<=S.depth;d++)rows.push(treeNodes.map((n,i)=>({...n,idx:i})).filter(n=>n.d===d));
+  const maxRow=Math.max(...rows.map(r=>r.length));
+  const gap=48,W=Math.max(720,maxRow*gap+96),H=(S.depth+1)*92+50;
+  const pos={};
+  rows.forEach((row,d)=>row.forEach((n,i)=>{pos[n.idx]={x:W/2+(i-(row.length-1)/2)*gap,y:46+d*92};}));
+  const svg=svgEl('svg',{id:'treeSvg',viewBox:'0 0 '+W+' '+H,width:W,height:H});
+  for(let d=0;d<=S.depth;d++){
+    svg.appendChild(svgEl('line',{x1:0,y1:46+d*92,x2:W,y2:46+d*92,stroke:'#2e2750','stroke-width':1,'stroke-dasharray':'2 6',opacity:.5}));
+    const t=svgEl('text',{x:10,y:42+d*92,fill:'#6f6592','font-size':10,'font-family':'JetBrains Mono,monospace'});
+    t.textContent='гл. '+d;svg.appendChild(t);
+  }
+  treeNodes.forEach((n,i)=>{
+    if(n.p<0)return;
+    const a=pos[n.p],b=pos[i];
+    svg.appendChild(svgEl('path',{class:'tedge','data-idx':i,d:'M '+a.x+' '+(a.y+16)+' C '+a.x+' '+(a.y+52)+', '+b.x+' '+(b.y-52)+', '+b.x+' '+(b.y-16),
+      fill:'none',stroke:RULE_COLOR[n.r],'stroke-width':1.6,opacity:.4}));
+  });
+  treeNodes.forEach((n,i)=>{
+    const p=pos[i],g=svgEl('g',{class:'tnode','data-idx':i,'data-s':n.s});
+    const halo=svgEl('circle',{class:'halo',cx:p.x,cy:p.y,r:22,fill:'none',stroke:'#ffb547','stroke-width':2,style:'display:none'});
+    g.appendChild(halo);
+    g.appendChild(svgEl('circle',{class:'core',cx:p.x,cy:p.y,r:15,fill:n.r===0?'rgba(255,181,71,.2)':RULE_COLOR[n.r]+'26',stroke:n.r===0?'#ffb547':RULE_COLOR[n.r],'stroke-width':1.8}));
+    const num=svgEl('text',{x:p.x,y:p.y+4,'text-anchor':'middle',fill:n.r===0?'#ffb547':RULE_COLOR[n.r],'font-size':11,'font-weight':700,'font-family':'JetBrains Mono,monospace'});
+    num.textContent=n.r===0?'A':ROMAN[n.r];g.appendChild(num);
+    const lbl=svgEl('text',{x:p.x,y:p.y+30,'text-anchor':'middle',fill:'#9a90b8','font-size':9,'font-family':'JetBrains Mono,monospace'});
+    lbl.textContent=n.s.length<=7?n.s:n.s.slice(0,5)+'…';g.appendChild(lbl);
+    svg.appendChild(g);
+  });
+  const wrap=$('#treeSvgWrap');wrap.innerHTML='';wrap.appendChild(svg);
+  $('#treeCount').textContent=treeNodes.length+' теорем · глубина ≤ '+S.depth;
+  $('#treeDepthVal').textContent=S.depth;
+  svg.addEventListener('pointerover',e=>{
+    const g=e.target.closest('.tnode');if(!g)return;
+    const idx=+g.dataset.idx,n=treeNodes[idx];
+    const chainSet=new Set();let i=idx;while(i>=0){chainSet.add(i);i=treeNodes[i].p;}
+    svg.classList.add('focus');
+    svg.querySelectorAll('.tnode,.tedge').forEach(el=>el.classList.toggle('lit',chainSet.has(+el.dataset.idx)));
+    $('#treeInspect').innerHTML=tilesHTML(n.s,'mini')+'<span class="ti-meta">глубина <b>'+n.d+'</b> · '+(n.r?'правило <b>'+ROMAN[n.r]+'</b>':'<b>аксиома</b>')+' · длина '+n.s.length+' · <b>клик</b> — загрузить вывод</span>';
+  });
+  svg.addEventListener('pointerleave',()=>{
+    svg.classList.remove('focus');
+    svg.querySelectorAll('.lit').forEach(el=>el.classList.remove('lit'));
+  });
+  svg.addEventListener('click',e=>{
+    const g=e.target.closest('.tnode');if(!g)return;
+    const idx=+g.dataset.idx,ch=[];let i=idx;
+    while(i>=0){ch.push({s:treeNodes[i].s,r:treeNodes[i].r});i=treeNodes[i].p;}
+    loadChain(ch.reverse(),'Теорема с дерева загружена: кратчайший вывод из '+(ch.length-1)+' '+plural(ch.length-1,'шага','шагов','шагов')+'.',true);
+  });
+  updateTreeMarks();
+}
+function bind(){
+  $('#heroStart').addEventListener('click',()=>{sClick();$('#workshop').scrollIntoView({behavior:reduced?'auto':'smooth'});});
+  $('#heroCheck').addEventListener('click',()=>{sClick();$('#checker').scrollIntoView({behavior:reduced?'auto':'smooth'});setTimeout(()=>$('#checkInput').focus(),reduced?0:600);});
+  $('#progressBadge').addEventListener('click',()=>$('#quests').scrollIntoView({behavior:reduced?'auto':'smooth'}));
+  $('#questStrip').addEventListener('click',e=>{
+    const card=e.target.closest('.quest-card');if(!card)return;
+    S.active=+card.dataset.q;sClick();renderAll();save();
+    $('#questBanner').scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  });
+  $('#qbHint').addEventListener('click',()=>{$('#qbHintText').classList.toggle('show');sClick();});
+  $('#muDare').addEventListener('click',()=>{
+    $('#checkInput').value='MU';updateLive();
+    $('#checker').scrollIntoView({behavior:reduced?'auto':'smooth'});
+    $('#checkBtn').classList.add('pulse');setTimeout(()=>$('#checkBtn').classList.remove('pulse'),3000);
+    setTimeout(()=>$('#checkInput').focus(),reduced?0:600);sClick();
+  });
+  $('#ruleGrid').addEventListener('click',e=>{
+    const card=e.target.closest('.rule-card');if(!card)return;
+    const id=+card.dataset.rule;
+    if(card.classList.contains('unavailable')){ruleUnavailable(id);return;}
+    armOrApply(id);
+  });
+  $('#tileStrip').addEventListener('click',e=>{
+    const t=e.target.closest('.tile');if(!t||!armed||t.dataset.pos==null)return;
+    apply(armed,+t.dataset.pos);
+  });
+  $('#occChooser').addEventListener('click',e=>{
+    if(e.target.closest('#ocCancel')){armed=null;renderStrip();renderRules();renderChooser();sClick();return;}
+    const ch=e.target.closest('.occ-choice');if(!ch||!armed)return;
+    apply(armed,+ch.dataset.pos);
+  });
+  $('#undoBtn').addEventListener('click',undo);
+  $('#resetBtn').addEventListener('click',resetChain);
+  $('#chainList').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.act==='trunc')truncate(+b.dataset.i);
+    else if(b.dataset.act==='check'){$('#checkInput').value=b.dataset.s;updateLive();runCheck(b.dataset.s);$('#checker').scrollIntoView({behavior:reduced?'auto':'smooth'});}
+  });
+  $('#collectionList').addEventListener('click',e=>{
+    const chip=e.target.closest('.col-chip');if(!chip)return;
+    const en=S.collection[chip.dataset.s];if(!en)return;
+    loadChain(en.chain,'Из коллекции: '+chip.dataset.s,false);
+  });
+  $('#colFilter').addEventListener('input',e=>{colFilterVal=e.target.value;renderCollection();});
+  $('#colSort').addEventListener('change',renderCollection);
+  $('#colClear').addEventListener('click',()=>{
+    colSnapshot=S.collection;
+    S.collection={MI:{chain:[{s:'MI',r:0}],t:Date.now()}};
+    renderCollection();save();
+    toast('Коллекция очищена.',{type:'info',action:{label:'Вернуть',fn:()=>{if(colSnapshot){S.collection=colSnapshot;colSnapshot=null;renderCollection();save();}}}});
+  });
+  $('#checkForm').addEventListener('submit',e=>{e.preventDefault();runCheck($('#checkInput').value);});
+  $('#checkInput').addEventListener('input',updateLive);
+  const examples=[['MU','главная цель',true],['MI','аксиома'],['MIU',''],['MUIIU','из книги'],['MIIII',''],['MUM','из книги'],['UIM','из книги'],['MUUMUU','из книги']];
+  $('#exampleChips').innerHTML=examples.map(x=>'<button type="button" class="ex-chip'+(x[2]?' danger':'')+'" data-s="'+x[0]+'">'+x[0]+(x[1]?'<small>'+x[1]+'</small>':'')+'</button>').join('');
+  $('#exampleChips').addEventListener('click',e=>{
+    const chip=e.target.closest('.ex-chip');if(!chip)return;
+    $('#checkInput').value=chip.dataset.s;updateLive();runCheck(chip.dataset.s);
+  });
+  $('#verdict').addEventListener('click',e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;
+    const act=b.dataset.act;
+    if(act==='play')togglePlay();
+    else if(act==='load'&&lastDerivation)loadChain(lastDerivation,'Вывод загружен в мастерскую — продолжайте с него!',true);
+    else if(act==='pred'){const d=findDerivation(b.dataset.s);loadChain(d,'Предшественник '+b.dataset.s+' загружен.',true);}
+    else if(act==='insight')$('#insight').scrollIntoView({behavior:reduced?'auto':'smooth'});
+  });
+  $('#treeDepth').addEventListener('input',e=>{S.depth=+e.target.value;renderTree();save();});
+  $$('.hint-btn').forEach(b=>b.addEventListener('click',()=>{$('#hintT'+b.dataset.hint).classList.add('show');sClick();}));
+  $('#revealBtn').addEventListener('click',()=>unlockInsight(false));
+  $('#soundBtn').addEventListener('click',()=>{
+    S.sound=!S.sound;
+    if(master)master.gain.value=S.sound?.16:0;
+    updateSoundBtn();save();if(S.sound)sClick();
+  });
+  let wipeArmed=false,wipeTimer=null;
+  $('#wipeBtn').addEventListener('click',()=>{
+    const b=$('#wipeBtn');
+    if(!wipeArmed){wipeArmed=true;b.classList.add('arm');b.textContent='Точно сбросить всё? Кликните ещё раз';
+      wipeTimer=setTimeout(()=>{wipeArmed=false;b.classList.remove('arm');b.textContent='Сбросить весь прогресс';},3500);}
+    else{clearTimeout(wipeTimer);try{localStorage.removeItem(LS);}catch(e){}location.reload();}
+  });
+  document.addEventListener('keydown',e=>{
+    const tag=(e.target.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='textarea'||tag==='select'||e.isComposing)return;
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo();return;}
+    if(e.key==='Escape'&&armed){armed=null;renderStrip();renderRules();renderChooser();return;}
+    if(['1','2','3','4'].includes(e.key)){
+      const id=+e.key,card=$('.rule-card[data-rule="'+id+'"]');
+      if(!card)return;
+      if(card.classList.contains('unavailable'))ruleUnavailable(id);else armOrApply(id);
+    }
+  });
+  document.addEventListener('pointerdown',function once(){audio();document.removeEventListener('pointerdown',once);});
+}
+function updateLive(){
+  const raw=$('#checkInput').value,norm=normalize(raw);
+  $('#normPreview').textContent=norm&&norm!==raw.trim()?('распознано → '+norm):'';
+  if(!norm){$('#liveCounts').textContent='';return;}
+  const nI=countCh(norm,'I');
+  $('#liveCounts').textContent='M: '+countCh(norm,'M')+' · I: '+nI+' · U: '+countCh(norm,'U')+' · I mod 3 = '+(nI%3);
+}
+function updateSoundBtn(){
+  const b=$('#soundBtn');
+  b.classList.toggle('off',!S.sound);
+  b.setAttribute('aria-pressed',String(S.sound));
+  b.setAttribute('aria-label',S.sound?'Выключить звук':'Включить звук');
+  b.title=S.sound?'Звук включён':'Звук выключен';
+  b.querySelector('.waves').style.display=S.sound?'':'none';
+  b.querySelector('.cross').style.display=S.sound?'none':'';
+}
+function initObservers(){
+  const rev=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');rev.unobserve(x.target);}}),{threshold:.12});
+  $$('.reveal').forEach(el=>rev.observe(el));
+  const links=$$('.nav-link');
+  const spy=new IntersectionObserver(es=>es.forEach(x=>{
+    if(x.isIntersecting)links.forEach(l=>l.classList.toggle('active',l.dataset.sec===x.target.id));
+  }),{rootMargin:'-40% 0px -55% 0px'});
+  ['workshop','checker','tree','insight'].forEach(id=>{const el=document.getElementById(id);if(el)spy.observe(el);});
+}
+load();
+if(!S.collection.MI)S.collection.MI={chain:[{s:'MI',r:0}],t:Date.now()};
+sizeCanvases();initGlyphs();
+if(reduced)drawBG(0);else startLoop();
+bind();
+$('#treeDepth').value=S.depth;
+renderAll();
+renderTree();
+updateSoundBtn();
+if(master)master.gain.value=S.sound?.16:0;
+if(S.insight){
+  $('#insightLocked').style.display='none';$('#insightBody').classList.add('show');
+  $('#treeMuNote').textContent='Ответ известен: MU не растёт на этом дереве — ни на одном уровне. Число I в теореме никогда не делится на 3.';
+}
+initObservers();
+save();
+})();
+</script>
+</body>
+</html>
