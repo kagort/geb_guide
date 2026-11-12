@@ -59,6 +59,7 @@ aliases: ["Gödel's incompleteness theorems", "Теоремы о неполно�
 | [[chapter-14-on-formally-undecidable-propositions-of-tnt-and-related-systems\|Глава XIV]] | «О формально неразрешимых суждениях ТТЧ» — подробный разбор доказательства |
 
 ## Связанные карточки
+- [[peano-arithmetic|Арифметика Пеано]]
 - [[kurt-godel|Курт Гёдель]]
 - [[strange-loop|Странная петля]]
 - [[epimenides-paradox|Парадокс Эпименида]]
