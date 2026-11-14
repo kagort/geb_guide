@@ -1,3 +1,8 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+
+// Callouts [!Cite] и [!Quote] (Quartz сводит cite к quote): каждая строка исходника — с новой строки, как в Obsidian
+.callout[data-callout="quote"] .callout-content p {
+  white-space: pre-line;
+}
