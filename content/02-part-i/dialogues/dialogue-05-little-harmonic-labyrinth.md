@@ -1,13 +1,17 @@
 ---
 id: dialogue_05
-title: "Маленький гармонический лабиринт"
-title_en: "Little Harmonic Labyrinth"
+title: Маленький гармонический лабиринт
+title_en: Little Harmonic Labyrinth
 type: диалог
 status: draft
 session_dates: []
-tags: [geb, диалог]
+tags:
+  - geb
+  - диалог
 related: []
-aliases: ["Little Harmonic Labyrinth"]
+aliases:
+  - Little Harmonic Labyrinth
+  - Маленький гармонический лабиринт
 ---
 
 ## Музыкальная форма-прообраз
