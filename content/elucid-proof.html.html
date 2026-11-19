@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доказательство Евклида: бесконечность простых чисел</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a1a2e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: #16213e;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        canvas {
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            background-color: #0f0f1a;
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 8px 20px;
+            background: #e94560;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #c73650;
+        }
+        .caption {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #a0a0b0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="proofCanvas" width="800" height="400"></canvas>
+        <div class="controls">
+            <button id="pauseBtn">⏸ Пауза</button>
+            <button id="resetBtn">🔄 Заново</button>
+        </div>
+        <p class="caption">Предположим, что простых чисел конечное число. Перемножим их и прибавим 1. Полученное число не делится ни на одно из них — значит, должно существовать ещё одно простое число.</p>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('proofCanvas');
+            const ctx = canvas.getContext('2d');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            let animationId = null;
+            let isPaused = false;
+            let startTime = null;
+            let elapsedBeforePause = 0;
+            const cycleDuration = 10000; // 10 секунд
+
+            const initialPrimes = [2, 3, 5, 7, 11];
+            const product = initialPrimes.reduce((a, b) => a * b, 1);
+            const N = product + 1; // 2311
+
+            function roundRect(x, y, w, h, r) {
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + h - r);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+            }
+
+            function drawFrame(progress) {
+                const t = progress * cycleDuration;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Заголовок
+                ctx.font = 'bold 18px Segoe UI, sans-serif';
+                ctx.fillStyle = '#e0e0e0';
+                ctx.textAlign = 'center';
+                ctx.fillText('Доказательство Евклида', canvas.width / 2, 35);
+
+                // --- Фаза 1: Показ исходных простых чисел (0 - 3000 мс) ---
+                if (t < 3000) {
+                    const alpha = Math.min(1, t / 500);
+                    ctx.globalAlpha = alpha;
+                    ctx.font = '16px Segoe UI, sans-serif';
+                    ctx.fillStyle = '#a0d0ff';
+                    ctx.fillText('Предположим, что это все простые числа:', canvas.width / 2, 80);
+
+                    const blockWidth = 80;
+                    const blockHeight = 50;
+                    const gap = 20;
+                    const totalWidth = initialPrimes.length * blockWidth + (initialPrimes.length - 1) * gap;
+                    const startX = (canvas.width - totalWidth) / 2;
+                    const y = 120;
+
+                    initialPrimes.forEach((p, i) => {
+                        const x = startX + i * (blockWidth + gap);
+                        const blockDelay = i * 200;
+                        if (t > blockDelay) {
+                            const scale = Math.min(1, (t - blockDelay) / 300);
+                            ctx.save();
+                            ctx.translate(x + blockWidth/2, y + blockHeight/2);
+                            ctx.scale(scale, scale);
+                            ctx.fillStyle = '#0f3460';
+                            roundRect(-blockWidth/2, -blockHeight/2, blockWidth, blockHeight, 8);
+                            ctx.fill();
+                            ctx.strokeStyle = '#e94560';
+                            ctx.lineWidth = 2;
+                            ctx.stroke();
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 22px Segoe UI, sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(p.toString(), 0, 0);
+                            ctx.restore();
+                        }
+                    });
+                    ctx.globalAlpha = 1;
+                }
+
+                // --- Фаза 2: Формула и вывод (3000 - 10000 мс) ---
+                if (t >= 3000) {
+                    const phaseT = t - 3000;
+
+                    const fadeIn = Math.min(1, phaseT / 500);
+                    ctx.globalAlpha = fadeIn;
+
+                    ctx.font = '16px Segoe UI, sans-serif';
+                    ctx.fillStyle = '#a0d0ff';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Перемножим их и прибавим 1:', canvas.width / 2, 80);
+
+                    ctx.font = '18px Consolas, monospace';
+                    ctx.fillStyle = '#e0e0e0';
+                    const formula = `N = ${initialPrimes.join(' × ')} + 1 = ${product} + 1 = ${N}`;
+                    ctx.fillText(formula, canvas.width / 2, 120);
+
+                    if (phaseT > 800) {
+                        const alpha2 = Math.min(1, (phaseT - 800) / 600);
+                        ctx.globalAlpha = alpha2;
+
+                        ctx.font = 'bold 20px Segoe UI, sans-serif';
+                        ctx.fillStyle = '#e94560';
+                        ctx.fillText('N не делится ни на одно из исходных простых чисел!', canvas.width / 2, 180);
+
+                        ctx.font = '18px Segoe UI, sans-serif';
+                        ctx.fillStyle = '#a0d0ff';
+                        ctx.fillText('Значит, должно существовать ещё одно простое число.', canvas.width / 2, 220);
+                        ctx.fillText(`(Например, ${N} — простое)`, canvas.width / 2, 250);
+                    }
+
+                    if (phaseT > 1500) {
+                        const alpha3 = Math.min(1, (phaseT - 1500) / 500);
+                        const pulse = Math.sin(phaseT / 200) * 0.2 + 1;
+                        ctx.globalAlpha = alpha3;
+                        ctx.save();
+                        ctx.translate(canvas.width / 2, 320);
+                        ctx.scale(pulse, pulse);
+                        ctx.fillStyle = '#0f3460';
+                        roundRect(-60, -30, 120, 60, 10);
+                        ctx.fill();
+                        ctx.strokeStyle = '#e94560';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 28px Segoe UI, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(N.toString(), 0, 0);
+                        ctx.restore();
+                    }
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                if (isPaused) {
+                    animationId = requestAnimationFrame(animate);
+                    return;
+                }
+                const elapsed = timestamp - startTime - elapsedBeforePause;
+                const progress = (elapsed % cycleDuration) / cycleDuration;
+
+                drawFrame(progress);
+
+                animationId = requestAnimationFrame(animate);
+            }
+
+            pauseBtn.addEventListener('click', () => {
+                if (isPaused) {
+                    isPaused = false;
+                    pauseBtn.textContent = '⏸ Пауза';
+                    startTime = performance.now() - elapsedBeforePause;
+                } else {
+                    isPaused = true;
+                    pauseBtn.textContent = '▶ Продолжить';
+                    elapsedBeforePause = performance.now() - startTime;
+                }
+            });
+
+            resetBtn.addEventListener('click', () => {
+                isPaused = false;
+                pauseBtn.textContent = '⏸ Пауза';
+                startTime = null;
+                elapsedBeforePause = 0;
+                if (animationId) cancelAnimationFrame(animationId);
+                animationId = requestAnimationFrame(animate);
+            });
+
+            animationId = requestAnimationFrame(animate);
+        })();
+    </script>
+</body>
+</html>
